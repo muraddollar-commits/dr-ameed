@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. Ameed Dental Clinic</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #C9A84C; --gold-light: #E8C97A; --gold-pale: #F5E9C8;
+    --dark: #0D0D1A; --dark2: #131325; --dark3: #1A1A32;
+    --cream: #FAF6ED; --text-light: #E8E0D0; --text-muted: #9A9080;
+  }
+  body { font-family: 'Tajawal', sans-serif; background: var(--dark); color: var(--text-light); min-height: 100vh; overflow-x: hidden; direction: rtl; }
+  .bg-canvas { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+  .bg-canvas::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 50% at 20% 20%, rgba(201,168,76,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 80%, rgba(201,168,76,0.08) 0%, transparent 60%); animation: bgPulse 8s ease-in-out infinite alternate; }
+  @keyframes bgPulse { from { opacity: 0.6; } to { opacity: 1; } }
+  .particle { position: fixed; width: 2px; height: 2px; background: var(--gold); border-radius: 50%; opacity: 0; animation: float linear infinite; pointer-events: none; z-index: 0; }
+  @keyframes float { 0% { opacity: 0; transform: translateY(100vh) scale(0); } 10% { opacity: 0.6; } 90% { opacity: 0.3; } 100% { opacity: 0; transform: translateY(-10vh) scale(1.5); } }
+  .page { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem 3rem; }
+  .logo-area { text-align: center; margin-bottom: 2.5rem; animation: fadeDown 1s ease both; }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+  .logo-svg-wrap { width: 100px; height: 100px; margin: 0 auto 1rem; animation: glow 3s ease-in-out infinite alternate; }
+  @keyframes glow { from { filter: drop-shadow(0 0 15px rgba(201,168,76,0.4)); } to { filter: drop-shadow(0 0 35px rgba(201,168,76,0.8)); } }
+  .logo-title { font-family: 'Amiri', serif; font-size: 2rem; font-weight: 700; background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .logo-sub { font-size: 0.85rem; color: var(--text-muted); letter-spacing: 4px; text-transform: uppercase; margin-top: 0.25rem; }
+  .card { background: linear-gradient(145deg, rgba(26,26,50,0.95), rgba(19,19,37,0.98)); border: 1px solid rgba(201,168,76,0.2); border-radius: 24px; width: 100%; max-width: 560px; padding: 2.5rem 2rem; box-shadow: 0 30px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(201,168,76,0.1); animation: fadeUp 1s ease 0.2s both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+  .steps-bar { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 2rem; }
+  .step-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(201,168,76,0.2); border: 1px solid rgba(201,168,76,0.3); transition: all 0.4s ease; }
+  .step-dot.active { background: var(--gold); width: 28px; border-radius: 4px; box-shadow: 0 0 10px rgba(201,168,76,0.6); }
+  .step-dot.done { background: rgba(201,168,76,0.5); }
+  .step-panel { display: none; animation: stepIn 0.5s ease both; }
+  .step-panel.active { display: block; }
+  @keyframes stepIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+  .step-title { font-family: 'Amiri', serif; font-size: 1.5rem; font-weight: 700; color: var(--gold-light); margin-bottom: 0.5rem; }
+  .step-hint { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6; }
+  .form-group { margin-bottom: 1.25rem; }
+  .form-label { display: block; font-size: 0.85rem; color: var(--gold); margin-bottom: 0.4rem; font-weight: 500; }
+  .form-input { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2); border-radius: 12px; padding: 0.85rem 1rem; color: var(--text-light); font-family: 'Tajawal', sans-serif; font-size: 1rem; outline: none; transition: all 0.3s ease; direction: rtl; }
+  .form-input::placeholder { color: var(--text-muted); }
+  .form-input:focus { border-color: var(--gold); background: rgba(201,168,76,0.06); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; }
+  .option-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.15); border-radius: 14px; padding: 0.9rem 0.75rem; color: var(--text-light); font-family: 'Tajawal', sans-serif; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; line-height: 1.3; }
+  .option-btn .opt-icon { font-size: 1.5rem; display: block; }
+  .option-btn:hover { border-color: rgba(201,168,76,0.4); background: rgba(201,168,76,0.07); transform: translateY(-2px); }
+  .option-btn.selected { border-color: var(--gold); background: rgba(201,168,76,0.15); color: var(--gold-light); box-shadow: 0 0 15px rgba(201,168,76,0.15); transform: translateY(-2px); }
+  .time-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 1.25rem; }
+  .time-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.15); border-radius: 10px; padding: 0.65rem 0.4rem; color: var(--text-muted); font-family: 'Tajawal', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.3s ease; text-align: center; }
+  .time-btn:hover { border-color: rgba(201,168,76,0.3); color: var(--text-light); }
+  .time-btn.selected { border-color: var(--gold); background: rgba(201,168,76,0.15); color: var(--gold-light); font-weight: 700; }
+  .day-row { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .day-btn { flex: 1; min-width: 60px; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.15); border-radius: 10px; padding: 0.55rem 0.3rem; color: var(--text-muted); font-family: 'Tajawal', sans-serif; font-size: 0.8rem; cursor: pointer; transition: all 0.3s ease; text-align: center; }
+  .day-btn:hover { border-color: rgba(201,168,76,0.3); color: var(--text-light); }
+  .day-btn.selected { border-color: var(--gold); background: rgba(201,168,76,0.15); color: var(--gold-light); font-weight: 700; }
+  .btn-primary { width: 100%; background: linear-gradient(135deg, #B8922A, #E8C97A, #B8922A); background-size: 200% 100%; border: none; border-radius: 14px; padding: 1rem; color: var(--dark); font-family: 'Tajawal', sans-serif; font-size: 1.05rem; font-weight: 800; cursor: pointer; transition: all 0.3s ease; margin-top: 0.5rem; }
+  .btn-primary:hover { background-position: 100% 0; box-shadow: 0 8px 30px rgba(201,168,76,0.4); transform: translateY(-2px); }
+  .btn-back { background: transparent; border: 1px solid rgba(201,168,76,0.2); border-radius: 12px; padding: 0.7rem 1.5rem; color: var(--text-muted); font-family: 'Tajawal', sans-serif; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease; margin-left: 0.75rem; }
+  .btn-back:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-row { display: flex; align-items: center; margin-top: 0.75rem; }
+  .btn-row .btn-primary { flex: 1; margin-top: 0; }
+  .summary-box { background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.25); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.5rem; }
+  .summary-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 0.5rem 0; border-bottom: 1px solid rgba(201,168,76,0.1); font-size: 0.9rem; gap: 1rem; }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-label { color: var(--text-muted); white-space: nowrap; }
+  .summary-val { color: var(--gold-light); font-weight: 500; text-align: left; }
+  .whatsapp-btn { width: 100%; background: linear-gradient(135deg, #1a6b35, #25a244, #1a6b35); background-size: 200% 100%; border: none; border-radius: 14px; padding: 1.1rem; color: #fff; font-family: 'Tajawal', sans-serif; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
+  .whatsapp-btn:hover { box-shadow: 0 8px 30px rgba(37,162,68,0.4); transform: translateY(-2px); }
+  .whatsapp-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .gold-divider { height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 1.5rem 0; opacity: 0.3; }
+  .error-msg { color: #e06060; font-size: 0.82rem; margin-top: 0.4rem; display: none; }
+  .error-msg.show { display: block; }
+  .complaint-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 1.25rem; }
+  .complaint-chip { background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.15); border-radius: 10px; padding: 0.65rem 0.75rem; color: var(--text-muted); font-family: 'Tajawal', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; gap: 0.5rem; }
+  .complaint-chip:hover { border-color: rgba(201,168,76,0.3); color: var(--text-light); }
+  .complaint-chip.selected { border-color: var(--gold); background: rgba(201,168,76,0.12); color: var(--gold-light); }
+  .chip-check { width: 16px; height: 16px; border: 1.5px solid rgba(201,168,76,0.3); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; transition: all 0.2s; }
+  .complaint-chip.selected .chip-check { background: var(--gold); border-color: var(--gold); color: var(--dark); }
+  /* Success screen */
+  .success-screen { text-align: center; padding: 1rem 0; }
+  .success-icon { font-size: 4rem; margin-bottom: 1rem; animation: bounce 0.6s ease; }
+  @keyframes bounce { 0% { transform: scale(0); } 60% { transform: scale(1.2); } 100% { transform: scale(1); } }
+  .success-title { font-family: 'Amiri', serif; font-size: 1.8rem; color: var(--gold-light); margin-bottom: 0.75rem; }
+  .success-msg { color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.5rem; }
+  .success-box { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.2); border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-light); line-height: 1.8; }
+  .loading-overlay { position: fixed; inset: 0; background: rgba(13,13,26,0.9); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; }
+  .spinner { width: 48px; height: 48px; border: 3px solid rgba(201,168,76,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: var(--gold); font-family: 'Tajawal', sans-serif; font-size: 0.95rem; }
+  .footer { text-align: center; color: var(--text-muted); font-size: 0.78rem; margin-top: 1.5rem; opacity: 0.6; }
+</style>
+</head>
+<body>
+<div class="bg-canvas"></div>
+<div id="loadingOverlay" class="loading-overlay" style="display:none">
+  <div class="spinner"></div>
+  <div class="loading-text">جاري حفظ طلبك...</div>
+</div>
+<div class="page">
+  <div class="logo-area">
+    <div class="logo-svg-wrap">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+        <defs>
+          <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F5E0A0"/><stop offset="30%" stop-color="#C9A84C"/>
+            <stop offset="60%" stop-color="#E8C97A"/><stop offset="100%" stop-color="#A07828"/>
+          </linearGradient>
+        </defs>
+        <path d="M50 8 C38 8,20 16,18 32 C16 44,22 52,26 60 C30 68,30 80,36 88 C39 93,44 94,47 90 C49 86,49 78,50 74 C51 78,51 86,53 90 C56 94,61 93,64 88 C70 80,70 68,74 60 C78 52,84 44,82 32 C80 16,62 8,50 8 Z" fill="url(#goldGrad)" opacity="0.95"/>
+        <path d="M50 16 C42 16,28 22,26 34 C25 40,28 46,30 52" fill="none" stroke="rgba(255,248,200,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="logo-title">Dr. Ameed</div>
+    <div class="logo-sub">Dental Clinic</div>
+  </div>
+  <div class="card">
+    <div class="steps-bar" id="stepsBar">
+      <div class="step-dot active" id="dot0"></div>
+      <div class="step-dot" id="dot1"></div>
+      <div class="step-dot" id="dot2"></div>
+      <div class="step-dot" id="dot3"></div>
+      <div class="step-dot" id="dot4"></div>
+    </div>
+    <!-- STEP 1 -->
+    <div class="step-panel active" id="step0">
+      <div class="step-title">أهلاً بك 👋</div>
+      <p class="step-hint">نسعد بخدمتك في عيادة Dr. Ameed. ابدأ بتعريف نفسك.</p>
+      <div class="form-group">
+        <label class="form-label">الاسم الكامل</label>
+        <input class="form-input" id="patientName" type="text" placeholder="مثال: محمد أحمد"/>
+        <div class="error-msg" id="nameErr">يرجى إدخال اسمك</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">رقم الهاتف</label>
+        <input class="form-input" id="patientPhone" type="tel" placeholder="05x-xxx-xxxx" dir="ltr" style="text-align:right"/>
+        <div class="error-msg" id="phoneErr">يرجى إدخال رقم هاتفك</div>
+      </div>
+      <div class="gold-divider"></div>
+      <button class="btn-primary" onclick="goTo(1)">التالي ←</button>
+    </div>
+    <!-- STEP 2 -->
+    <div class="step-panel" id="step1">
+      <div class="step-title">الخدمة المطلوبة 🦷</div>
+      <p class="step-hint">اختر الخدمة التي تحتاجها</p>
+      <div class="options-grid" id="services">
+        <button class="option-btn" onclick="selectService(this,'كشف وتشخيص')"><span class="opt-icon">🔍</span>كشف وتشخيص</button>
+        <button class="option-btn" onclick="selectService(this,'تنظيف الأسنان')"><span class="opt-icon">✨</span>تنظيف الأسنان</button>
+        <button class="option-btn" onclick="selectService(this,'تبييض الأسنان')"><span class="opt-icon">🌟</span>تبييض الأسنان</button>
+        <button class="option-btn" onclick="selectService(this,'حشو الأسنان')"><span class="opt-icon">🪥</span>حشو الأسنان</button>
+        <button class="option-btn" onclick="selectService(this,'علاج العصب')"><span class="opt-icon">⚕️</span>علاج العصب</button>
+        <button class="option-btn" onclick="selectService(this,'خلع السن')"><span class="opt-icon">🩺</span>خلع السن</button>
+        <button class="option-btn" onclick="selectService(this,'تركيب تقويم')"><span class="opt-icon">😁</span>تركيب تقويم</button>
+        <button class="option-btn" onclick="selectService(this,'زراعة الأسنان')"><span class="opt-icon">🦴</span>زراعة الأسنان</button>
+        <button class="option-btn" onclick="selectService(this,'أطقم الأسنان')"><span class="opt-icon">💎</span>أطقم الأسنان</button>
+        <button class="option-btn" onclick="selectService(this,'تركيب تاج (كراون)')"><span class="opt-icon">👑</span>تاج (كراون)</button>
+      </div>
+      <div class="error-msg" id="serviceErr">يرجى اختيار خدمة</div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="goTo(2)">التالي ←</button>
+        <button class="btn-back" onclick="goTo(0)">→ رجوع</button>
+      </div>
+    </div>
+    <!-- STEP 3 -->
+    <div class="step-panel" id="step2">
+      <div class="step-title">ما الذي تشعر به؟ 😟</div>
+      <p class="step-hint">حدد أعراضك (يمكنك اختيار أكثر من واحد)</p>
+      <div class="complaint-grid" id="complaints">
+        <div class="complaint-chip" onclick="toggleComplaint(this,'ألم في السن')"><span class="chip-check">✓</span>ألم في السن</div>
+        <div class="complaint-chip" onclick="toggleComplaint(this,'تورم في اللثة')"><span class="chip-check">✓</span>تورم في اللثة</div>
+        <div class="complaint-chip" onclick="toggleComplaint(this,'حساسية الأسنان')"><span class="chip-check">✓</span>حساسية الأسنان</div>
+        <div class="complaint-chip" onclick="toggleComplaint(this,'كسر في السن')"><span class="chip-check">✓</span>كسر في السن</div>
+        <div class="complaint-chip" onclick="toggleComplaint(this,'نزيف اللثة')"><span class="chip-check">✓</span>نزيف اللثة</div>
+        <div class="complaint-chip" onclick="toggleComplaint(this,'رائحة الفم')"><span class="chip-check">✓</span>رائحة الفم</div>
+        <div class="complaint-chip" onclick="toggleComplaint(this,'أسنان مائلة')"><span class="chip-check">✓</span>أسنان مائلة</div>
+        <div class="complaint-chip" onclick="toggleComplaint(this,'مشكلة في التركيبة')"><span class="chip-check">✓</span>مشكلة في التركيبة</div>
+        <div class="complaint-chip" onclick="toggleComplaint(this,'فحص روتيني')"><span class="chip-check">✓</span>فحص روتيني</div>
+        <div class="complaint-chip" onclick="toggleComplaint(this,'ألم عند المضغ')"><span class="chip-check">✓</span>ألم عند المضغ</div>
+      </div>
+      <div class="form-group" style="margin-top:0.25rem">
+        <label class="form-label">تفاصيل إضافية (اختياري)</label>
+        <textarea class="form-input" id="extraNote" rows="2" placeholder="أي معلومات تودّ إضافتها للدكتور..." style="resize:none;line-height:1.5"></textarea>
+      </div>
+      <div class="error-msg" id="complaintErr">يرجى تحديد شكواك</div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="goTo(3)">التالي ←</button>
+        <button class="btn-back" onclick="goTo(1)">→ رجوع</button>
+      </div>
+    </div>
+    <!-- STEP 4 -->
+    <div class="step-panel" id="step3">
+      <div class="step-title">اختر الموعد المناسب 📅</div>
+      <p class="step-hint">اختر اليوم والوقت المفضل لديك</p>
+      <label class="form-label" style="margin-bottom:0.5rem">اليوم المفضل</label>
+      <div class="day-row" id="days">
+        <button class="day-btn" onclick="selectDay(this,'الأحد')">الأحد</button>
+        <button class="day-btn" onclick="selectDay(this,'الاثنين')">الاثنين</button>
+        <button class="day-btn" onclick="selectDay(this,'الثلاثاء')">الثلاثاء</button>
+        <button class="day-btn" onclick="selectDay(this,'الأربعاء')">الأربعاء</button>
+        <button class="day-btn" onclick="selectDay(this,'الخميس')">الخميس</button>
+        <button class="day-btn" onclick="selectDay(this,'السبت')">السبت</button>
+      </div>
+      <label class="form-label" style="margin:0.75rem 0 0.5rem">الوقت المفضل</label>
+      <div class="time-slots" id="times">
+        <button class="time-btn" onclick="selectTime(this,'9:00 - 10:00 ص')">9 - 10 ص</button>
+        <button class="time-btn" onclick="selectTime(this,'10:00 - 11:00 ص')">10 - 11 ص</button>
+        <button class="time-btn" onclick="selectTime(this,'11:00 - 12:00 م')">11 - 12 م</button>
+        <button class="time-btn" onclick="selectTime(this,'12:00 - 1:00 م')">12 - 1 م</button>
+        <button class="time-btn" onclick="selectTime(this,'2:00 - 3:00 م')">2 - 3 م</button>
+        <button class="time-btn" onclick="selectTime(this,'3:00 - 4:00 م')">3 - 4 م</button>
+        <button class="time-btn" onclick="selectTime(this,'4:00 - 5:00 م')">4 - 5 م</button>
+        <button class="time-btn" onclick="selectTime(this,'5:00 - 6:00 م')">5 - 6 م</button>
+        <button class="time-btn" onclick="selectTime(this,'أي وقت مناسب')">أي وقت</button>
+      </div>
+      <div class="error-msg" id="timeErr">يرجى تحديد يوم ووقت مناسبَين</div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="goTo(4)">مراجعة الطلب ←</button>
+        <button class="btn-back" onclick="goTo(2)">→ رجوع</button>
+      </div>
+    </div>
+    <!-- STEP 5 -->
+    <div class="step-panel" id="step4">
+      <div class="step-title">مراجعة وإرسال 📋</div>
+      <p class="step-hint">تحقق من بياناتك قبل الإرسال</p>
+      <div class="summary-box" id="summaryBox"></div>
+      <button class="whatsapp-btn" id="sendBtn" onclick="submitAndSend()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.554 4.11 1.522 5.839L.057 23.7a.5.5 0 00.617.629l5.96-1.527A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.83 9.83 0 01-5.02-1.376l-.36-.213-3.733.957.993-3.627-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+        إرسال الطلب للدكتور عبر واتساب
+      </button>
+      <button class="btn-back" style="width:100%;margin-top:0.75rem;text-align:center" onclick="goTo(3)">→ تعديل</button>
+    </div>
+    <!-- SUCCESS -->
+    <div class="step-panel" id="stepSuccess">
+      <div class="success-screen">
+        <div class="success-icon">🎉</div>
+        <div class="success-title">تم إرسال طلبك!</div>
+        <p class="success-msg">وصل طلبك للدكتور Ameed. سيتواصل معك قريباً لتأكيد الموعد.</p>
+        <div class="success-box">
+          <strong style="color:var(--gold)">📋 ملخص طلبك:</strong><br/>
+          <span id="successSummary"></span>
+        </div>
+        <button class="btn-primary" onclick="resetForm()" style="margin-top:0">حجز موعد جديد ←</button>
+      </div>
+    </div>
+  </div>
+  <div class="footer">عيادة Dr. Ameed للأسنان &nbsp;|&nbsp; Dental Clinic</div>
+</div>
+<script>
+  const SUPABASE_URL = 'https://mcyymirzzefhhutiofsw.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jeXltaXJ6emVmaGh1dGlvZnN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjQxMTAsImV4cCI6MjA5NDg0MDExMH0.82-EY5XTdCEcLbuRi_6gbjpeq1IEqAP-wm-OxV-OSLc';
+  const WA_NUMBER = '972595201014';
+
+  const state = { name:'', phone:'', service:'', complaints:[], note:'', day:'', time:'' };
+  let currentStep = 0;
+
+  for (let i=0;i<25;i++){const p=document.createElement('div');p.className='particle';p.style.cssText=`left:${Math.random()*100}%;width:${1+Math.random()*3}px;height:${1+Math.random()*3}px;animation-duration:${8+Math.random()*12}s;animation-delay:${Math.random()*10}s`;document.body.appendChild(p);}
+
+  function updateDots(n){for(let i=0;i<5;i++){const d=document.getElementById('dot'+i);d.className='step-dot'+(i===n?' active':i<n?' done':'');}}
+  function showStep(n){document.querySelectorAll('.step-panel').forEach((p,i)=>p.classList.toggle('active',i===n));updateDots(n);currentStep=n;}
+  function clearErrors(){document.querySelectorAll('.error-msg').forEach(e=>e.classList.remove('show'));}
+  function showError(id){document.getElementById(id).classList.add('show');}
+
+  function goTo(n){
+    clearErrors();
+    if(n>currentStep&&!validate(currentStep))return;
+    if(n===4)buildSummary();
+    showStep(n);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function validate(step){
+    if(step===0){
+      const name=document.getElementById('patientName').value.trim();
+      const phone=document.getElementById('patientPhone').value.trim();
+      if(!name){showError('nameErr');return false;}
+      if(!phone){showError('phoneErr');return false;}
+      state.name=name;state.phone=phone;return true;
+    }
+    if(step===1){if(!state.service){showError('serviceErr');return false;}return true;}
+    if(step===2){
+      state.complaints=[...document.querySelectorAll('#complaints .complaint-chip.selected')].map(c=>c.dataset.val);
+      state.note=document.getElementById('extraNote').value.trim();
+      if(state.complaints.length===0){showError('complaintErr');return false;}
+      return true;
+    }
+    if(step===3){if(!state.day||!state.time){showError('timeErr');return false;}return true;}
+    return true;
+  }
+
+  function selectService(btn,val){document.querySelectorAll('#services .option-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');state.service=val;clearErrors();}
+  function toggleComplaint(el,val){el.dataset.val=val;el.classList.toggle('selected');clearErrors();}
+  function selectDay(btn,val){document.querySelectorAll('#days .day-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');state.day=val;clearErrors();}
+  function selectTime(btn,val){document.querySelectorAll('#times .time-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');state.time=val;clearErrors();}
+
+  function buildSummary(){
+    state.complaints=[...document.querySelectorAll('#complaints .complaint-chip.selected')].map(c=>c.dataset.val);
+    state.note=document.getElementById('extraNote').value.trim();
+    const rows=[['👤 الاسم',state.name],['📞 الهاتف',state.phone],['🦷 الخدمة',state.service],['😟 الشكوى',state.complaints.join(' • ')],['📅 اليوم',state.day],['🕐 الوقت',state.time]];
+    if(state.note)rows.push(['📝 ملاحظة',state.note]);
+    document.getElementById('summaryBox').innerHTML=rows.map(([l,v])=>`<div class="summary-row"><span class="summary-label">${l}</span><span class="summary-val">${v||'—'}</span></div>`).join('');
+  }
+
+  async function submitAndSend(){
+    const btn=document.getElementById('sendBtn');
+    btn.disabled=true;
+    document.getElementById('loadingOverlay').style.display='flex';
+    try{
+      await fetch(`${SUPABASE_URL}/rest/v1/appointments`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},
+        body:JSON.stringify({patient_name:state.name,patient_phone:state.phone,service:state.service,complaints:state.complaints.join(' | '),note:state.note,preferred_day:state.day,preferred_time:state.time,status:'pending'})
+      });
+    }catch(e){console.log('DB error',e);}
+    document.getElementById('loadingOverlay').style.display='none';
+    const msg=`🦷 *طلب موعد جديد - عيادة Dr. Ameed*\n━━━━━━━━━━━━━━━━━━━━\n👤 *الاسم:* ${state.name}\n📞 *الهاتف:* ${state.phone}\n━━━━━━━━━━━━━━━━━━━━\n🦷 *الخدمة:* ${state.service}\n😟 *الشكوى:* ${state.complaints.join(' | ')}\n${state.note?`📝 *ملاحظة:* ${state.note}\n`:''}━━━━━━━━━━━━━━━━━━━━\n📅 *اليوم:* ${state.day}\n🕐 *الوقت:* ${state.time}\n━━━━━━━━━━━━━━━━━━━━\n✅ تم الإرسال من نموذج الحجز الإلكتروني`;
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
+    document.getElementById('successSummary').innerHTML=`${state.name} | ${state.service} | ${state.day} ${state.time}`;
+    document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('stepSuccess').classList.add('active');
+    document.querySelectorAll('.step-dot').forEach(d=>{d.className='step-dot done';});
+  }
+
+  function resetForm(){
+    Object.assign(state,{name:'',phone:'',service:'',complaints:[],note:'',day:'',time:''});
+    document.getElementById('patientName').value='';
+    document.getElementById('patientPhone').value='';
+    document.getElementById('extraNote').value='';
+    document.querySelectorAll('.option-btn,.complaint-chip,.day-btn,.time-btn').forEach(el=>el.classList.remove('selected'));
+    document.getElementById('sendBtn').disabled=false;
+    showStep(0);
+  }
+</script>
+</body>
+</html>
