@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حجز موعد</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--dark:#0D0D1A;--dark2:#131325;--dark3:#1A1A32;--text-light:#E8E0D0;--text-muted:#9A9080;--primary:#C9A84C;}
+body{font-family:'Tajawal',sans-serif;background:var(--dark);color:var(--text-light);min-height:100vh;direction:rtl;}
+.bg-canvas{position:fixed;inset:0;z-index:0;}
+.bg-canvas::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(201,168,76,.12) 0%,transparent 60%),radial-gradient(ellipse 60% 60% at 80% 80%,rgba(201,168,76,.08) 0%,transparent 60%);animation:bgPulse 8s ease-in-out infinite alternate;}
+@keyframes bgPulse{from{opacity:.6}to{opacity:1}}
+.particle{position:fixed;width:2px;height:2px;border-radius:50%;opacity:0;animation:float linear infinite;pointer-events:none;z-index:0;}
+@keyframes float{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:.6}90%{opacity:.3}100%{opacity:0;transform:translateY(-10vh) scale(1.5)}}
+.page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 3rem;}
+.loading-screen{position:fixed;inset:0;background:var(--dark);z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;}
+.spinner{width:48px;height:48px;border:3px solid rgba(201,168,76,.2);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:var(--primary);font-family:'Tajawal',sans-serif;}
+.error-screen{text-align:center;padding:3rem 1rem;max-width:400px;margin:auto;}
+.error-icon{font-size:4rem;margin-bottom:1rem;}
+.error-title{font-family:'Amiri',serif;font-size:1.8rem;color:var(--primary);margin-bottom:.75rem;}
+.error-msg-text{color:var(--text-muted);font-size:.95rem;line-height:1.7;}
+/* Logo */
+.logo-area{text-align:center;margin-bottom:2rem;animation:fadeDown 1s ease both;}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+.logo-img{width:80px;height:80px;object-fit:contain;border-radius:50%;margin:0 auto .75rem;display:block;filter:drop-shadow(0 0 20px rgba(201,168,76,.5));animation:glow 3s ease-in-out infinite alternate;}
+.logo-placeholder{width:80px;height:80px;border-radius:50%;background:rgba(201,168,76,.15);border:2px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto .75rem;animation:glow 3s ease-in-out infinite alternate;}
+@keyframes glow{from{filter:drop-shadow(0 0 15px rgba(201,168,76,.4))}to{filter:drop-shadow(0 0 35px rgba(201,168,76,.8))}}
+.logo-title{font-family:'Amiri',serif;font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,var(--gold-light) 0%,var(--primary) 50%,var(--gold-light) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-sub{font-size:.82rem;color:var(--text-muted);letter-spacing:3px;text-transform:uppercase;margin-top:.2rem;}
+/* Card */
+.card{background:linear-gradient(145deg,rgba(26,26,50,.95),rgba(19,19,37,.98));border:1px solid rgba(201,168,76,.2);border-radius:24px;width:100%;max-width:560px;padding:2rem 1.75rem;box-shadow:0 30px 80px rgba(0,0,0,.6),inset 0 1px 0 rgba(201,168,76,.1);animation:fadeUp 1s ease .2s both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+/* Mode Tabs */
+.mode-tabs{display:flex;background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.15);border-radius:12px;padding:3px;margin-bottom:1.75rem;gap:3px;}
+.mode-tab{flex:1;background:transparent;border:none;border-radius:9px;padding:.65rem .5rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:.9rem;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:.4rem;}
+.mode-tab.active{background:var(--primary);color:#0D0D1A;font-weight:700;}
+/* Steps */
+.steps-bar{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:2rem;}
+.step-dot{width:8px;height:8px;border-radius:50%;background:rgba(201,168,76,.2);border:1px solid rgba(201,168,76,.3);transition:all .4s ease;}
+.step-dot.active{background:var(--primary);width:28px;border-radius:4px;box-shadow:0 0 10px rgba(201,168,76,.6);}
+.step-dot.done{background:rgba(201,168,76,.5);}
+.step-panel{display:none;animation:stepIn .5s ease both;}
+.step-panel.active{display:block;}
+@keyframes stepIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+.step-title{font-family:'Amiri',serif;font-size:1.4rem;font-weight:700;color:var(--gold-light);margin-bottom:.4rem;}
+.step-hint{font-size:.88rem;color:var(--text-muted);margin-bottom:1.4rem;line-height:1.6;}
+/* Form */
+.form-group{margin-bottom:1.1rem;}
+.form-label{display:block;font-size:.83rem;color:var(--primary);margin-bottom:.4rem;font-weight:500;}
+.form-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:.82rem 1rem;color:var(--text-light);font-family:'Tajawal',sans-serif;font-size:1rem;outline:none;transition:all .3s;direction:rtl;}
+.form-input::placeholder{color:var(--text-muted);}
+.form-input:focus{border-color:var(--primary);background:rgba(201,168,76,.06);box-shadow:0 0 0 3px rgba(201,168,76,.1);}
+/* Options grid */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:1.1rem;}
+.option-btn{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.15);border-radius:14px;padding:.85rem .7rem;color:var(--text-light);font-family:'Tajawal',sans-serif;font-size:.88rem;cursor:pointer;transition:all .3s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.4rem;line-height:1.3;}
+.option-btn .opt-icon{font-size:1.4rem;}
+.option-btn:hover{border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.07);transform:translateY(-2px);}
+.option-btn.selected{border-color:var(--primary);background:rgba(201,168,76,.15);color:var(--gold-light);transform:translateY(-2px);}
+/* Complaints */
+.complaint-grid{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:1.1rem;}
+.complaint-chip{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:.6rem .7rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:.83rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:.5rem;}
+.complaint-chip:hover{border-color:rgba(201,168,76,.3);color:var(--text-light);}
+.complaint-chip.selected{border-color:var(--primary);background:rgba(201,168,76,.12);color:var(--gold-light);}
+.chip-check{width:16px;height:16px;border:1.5px solid rgba(201,168,76,.3);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .2s;}
+.complaint-chip.selected .chip-check{background:var(--primary);border-color:var(--primary);color:#0D0D1A;}
+/* Days & Times */
+.day-row{display:flex;gap:.45rem;margin-bottom:1.1rem;flex-wrap:wrap;}
+.day-btn{flex:1;min-width:58px;background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:.5rem .25rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:.78rem;cursor:pointer;transition:all .3s;text-align:center;}
+.day-btn:hover{border-color:rgba(201,168,76,.3);color:var(--text-light);}
+.day-btn.selected{border-color:var(--primary);background:rgba(201,168,76,.15);color:var(--gold-light);font-weight:700;}
+.time-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem;margin-bottom:1.1rem;}
+.time-btn{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:.6rem .35rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:.82rem;cursor:pointer;transition:all .3s;text-align:center;}
+.time-btn:hover{border-color:rgba(201,168,76,.3);color:var(--text-light);}
+.time-btn.selected{border-color:var(--primary);background:rgba(201,168,76,.15);color:var(--gold-light);font-weight:700;}
+/* Buttons */
+.btn-primary{width:100%;background:linear-gradient(135deg,#B8922A,#E8C97A,#B8922A);background-size:200% 100%;border:none;border-radius:14px;padding:1rem;color:#0D0D1A;font-family:'Tajawal',sans-serif;font-size:1.02rem;font-weight:800;cursor:pointer;transition:all .3s;margin-top:.5rem;}
+.btn-primary:hover{background-position:100% 0;box-shadow:0 8px 30px rgba(201,168,76,.4);transform:translateY(-2px);}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.btn-back{background:transparent;border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:.68rem 1.4rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:.88rem;cursor:pointer;transition:all .3s;margin-left:.65rem;}
+.btn-back:hover{border-color:var(--primary);color:var(--primary);}
+.btn-row{display:flex;align-items:center;margin-top:.75rem;}
+.btn-row .btn-primary{flex:1;margin-top:0;}
+.btn-outline{width:100%;background:transparent;border:1px solid rgba(201,168,76,.3);border-radius:14px;padding:.9rem;color:var(--gold-light);font-family:'Tajawal',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .3s;margin-top:.5rem;}
+.btn-outline:hover{border-color:var(--primary);background:rgba(201,168,76,.08);}
+/* Summary */
+.summary-box{background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.25);border-radius:16px;padding:1.2rem;margin-bottom:1.4rem;}
+.summary-row{display:flex;justify-content:space-between;align-items:flex-start;padding:.45rem 0;border-bottom:1px solid rgba(201,168,76,.1);font-size:.88rem;gap:1rem;}
+.summary-row:last-child{border-bottom:none;}
+.summary-label{color:var(--text-muted);white-space:nowrap;}
+.summary-val{color:var(--gold-light);font-weight:500;text-align:left;}
+/* WhatsApp button */
+.whatsapp-btn{width:100%;background:linear-gradient(135deg,#1a6b35,#25a244,#1a6b35);background-size:200% 100%;border:none;border-radius:14px;padding:1.1rem;color:#fff;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:.6rem;}
+.whatsapp-btn:hover{box-shadow:0 8px 30px rgba(37,162,68,.4);transform:translateY(-2px);}
+.whatsapp-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+/* Gold divider */
+.gold-divider{height:1px;background:linear-gradient(90deg,transparent,var(--primary),transparent);margin:1.4rem 0;opacity:.3;}
+/* Error inline */
+.err-inline{color:#e06060;font-size:.8rem;margin-top:.4rem;display:none;}
+.err-inline.show{display:block;}
+/* Success */
+.success-screen{text-align:center;padding:1rem 0;}
+.success-icon{font-size:3.5rem;margin-bottom:.8rem;animation:bounce .6s ease;}
+@keyframes bounce{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.success-title{font-family:'Amiri',serif;font-size:1.7rem;color:var(--gold-light);margin-bottom:.65rem;}
+.success-msg{color:var(--text-muted);font-size:.92rem;line-height:1.7;margin-bottom:1.4rem;}
+.success-box{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.4rem;font-size:.88rem;line-height:1.8;}
+/* ============================
+   PATIENT DASHBOARD STYLES
+   ============================ */
+.patient-login-panel{}
+.patient-dashboard-panel{display:none;}
+/* Patient stats */
+.p-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;margin-bottom:1.25rem;}
+.pstat{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.15);border-radius:12px;padding:.75rem .5rem;text-align:center;}
+.pstat-num{font-size:1.5rem;font-weight:800;color:var(--gold-light);}
+.pstat-lbl{font-size:.72rem;color:var(--text-muted);margin-top:.1rem;}
+/* Section header inside patient */
+.p-section-title{font-family:'Amiri',serif;font-size:1.05rem;color:var(--gold-light);margin:1.1rem 0 .65rem;display:flex;align-items:center;gap:.5rem;}
+.p-section-title::after{content:'';flex:1;height:1px;background:rgba(201,168,76,.15);}
+/* Appointment mini-card */
+.appt-card{background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.12);border-radius:13px;padding:.9rem 1rem;margin-bottom:.6rem;transition:border-color .2s;}
+.appt-card:hover{border-color:rgba(201,168,76,.25);}
+.appt-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem;}
+.appt-service{font-weight:700;color:var(--gold-light);font-size:.92rem;}
+.appt-meta{font-size:.8rem;color:var(--text-muted);line-height:1.65;}
+.appt-notes{background:rgba(201,168,76,.07);border-radius:8px;padding:.45rem .7rem;font-size:.8rem;color:var(--text-muted);margin-top:.5rem;line-height:1.5;}
+/* Prescription mini-card */
+.rx-card{background:rgba(100,150,255,.05);border:1px solid rgba(100,150,255,.18);border-radius:13px;padding:.9rem 1rem;margin-bottom:.6rem;}
+.rx-name{font-weight:700;color:#6bb5ff;font-size:.92rem;margin-bottom:.3rem;}
+.rx-detail{font-size:.8rem;color:var(--text-muted);line-height:1.65;}
+/* Badge */
+.badge{display:inline-flex;align-items:center;border-radius:6px;padding:.18rem .55rem;font-size:.72rem;font-weight:700;}
+.b-pending{background:rgba(224,144,32,.15);color:#e09020;border:1px solid rgba(224,144,32,.3);}
+.b-confirmed{background:rgba(37,162,68,.15);color:#25a244;border:1px solid rgba(37,162,68,.3);}
+.b-completed{background:rgba(100,150,255,.15);color:#6bb5ff;border:1px solid rgba(100,150,255,.3);}
+.b-cancelled{background:rgba(224,85,85,.15);color:#e05555;border:1px solid rgba(224,85,85,.3);}
+/* Empty */
+.empty-mini{text-align:center;padding:1.5rem .5rem;color:var(--text-muted);font-size:.88rem;}
+/* Footer */
+.footer{text-align:center;color:var(--text-muted);font-size:.76rem;margin-top:1.4rem;opacity:.6;}
+/* Scrollable appt list */
+.appt-list{max-height:340px;overflow-y:auto;padding-right:.25rem;}
+.appt-list::-webkit-scrollbar{width:4px;}
+.appt-list::-webkit-scrollbar-thumb{background:rgba(201,168,76,.3);border-radius:4px;}
+
+/* AI Chatbot */
+.chat-bubble{position:fixed;bottom:1.5rem;left:1.5rem;z-index:100;}
+.chat-toggle{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);border:none;cursor:pointer;font-size:1.3rem;box-shadow:0 4px 20px rgba(124,58,237,.5);transition:transform .3s;display:flex;align-items:center;justify-content:center;}
+.chat-toggle:hover{transform:scale(1.1);}
+.chat-panel{position:fixed;bottom:5rem;left:1.5rem;width:300px;max-height:420px;background:linear-gradient(145deg,rgba(26,26,50,.99),rgba(19,19,37,.99));border:1px solid rgba(167,139,250,.25);border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);display:none;flex-direction:column;z-index:100;}
+.chat-panel.open{display:flex;}
+.chat-header{background:linear-gradient(135deg,#7c3aed,#a78bfa);padding:.8rem 1rem;font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:700;color:#fff;display:flex;justify-content:space-between;align-items:center;}
+.chat-close{background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:1rem;}
+.chat-msgs{flex:1;overflow-y:auto;padding:.75rem;display:flex;flex-direction:column;gap:.5rem;}
+.chat-msgs::-webkit-scrollbar{width:3px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:rgba(167,139,250,.3);border-radius:3px;}
+.msg{max-width:88%;padding:.55rem .8rem;border-radius:12px;font-size:.83rem;line-height:1.5;font-family:'Tajawal',sans-serif;}
+.msg-ai{background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.2);color:var(--text-light,#E8E0D0);align-self:flex-start;}
+.msg-user{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.25);color:var(--gold-light,#E8C97A);align-self:flex-end;text-align:right;}
+.msg-typing{opacity:.6;}
+.chat-input-row{display:flex;gap:.45rem;padding:.6rem .75rem;border-top:1px solid rgba(167,139,250,.15);}
+.chat-inp{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(167,139,250,.2);border-radius:10px;padding:.5rem .75rem;color:var(--text-light,#E8E0D0);font-family:'Tajawal',sans-serif;font-size:.83rem;outline:none;direction:rtl;}
+.chat-inp:focus{border-color:rgba(167,139,250,.5);}
+.chat-inp::placeholder{color:rgba(154,144,128,.5);}
+.chat-send{background:linear-gradient(135deg,#7c3aed,#a78bfa);border:none;border-radius:8px;padding:.5rem .7rem;color:#fff;cursor:pointer;font-size:.9rem;}
+.svc-chip{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);border-radius:8px;padding:.35rem .7rem;font-size:.78rem;color:var(--gold-light,#E8C97A);cursor:pointer;font-family:'Tajawal',sans-serif;margin:.25rem .2rem;display:inline-block;transition:all .2s;}
+.svc-chip:hover{background:rgba(201,168,76,.25);}
+</style>
+</head>
+<body>
+<div class="bg-canvas"></div>
+
+<!-- Loading -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="spinner"></div>
+  <div class="loading-text">جاري تحميل بيانات العيادة...</div>
+</div>
+
+<!-- Main -->
+<div class="page" id="mainPage" style="display:none">
+  <div class="logo-area" id="logoArea"></div>
+
+  <div class="card" id="mainCard">
+    <!-- Mode tabs -->
+    <div class="mode-tabs" id="modeTabs">
+      <button class="mode-tab active" id="tabBooking" onclick="switchMode('booking',this)">📅 حجز موعد</button>
+      <button class="mode-tab" id="tabPatient" onclick="switchMode('patient',this)">👤 مواعيدي</button>
+    </div>
+
+    <!-- ========== BOOKING MODE ========== -->
+    <div id="bookingMode">
+      <!-- Steps bar -->
+      <div class="steps-bar" id="stepsBar">
+        <div class="step-dot active" id="dot0"></div>
+        <div class="step-dot" id="dot1"></div>
+        <div class="step-dot" id="dot2"></div>
+        <div class="step-dot" id="dot3"></div>
+        <div class="step-dot" id="dot4"></div>
+      </div>
+
+      <!-- Step 1: Patient info -->
+      <div class="step-panel active" id="step0">
+        <div class="step-title">أهلاً بك 👋</div>
+        <p class="step-hint" id="welcomeHint">نسعد بخدمتك. ابدأ بتعريف نفسك.</p>
+        <div class="form-group">
+          <label class="form-label">الاسم الكامل</label>
+          <input class="form-input" id="patientName" type="text" placeholder="مثال: محمد أحمد"/>
+          <div class="err-inline" id="nameErr">يرجى إدخال اسمك</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">رقم الهاتف</label>
+          <input class="form-input" id="patientPhone" type="tel" placeholder="05x-xxx-xxxx" dir="ltr" style="text-align:right"/>
+          <div class="err-inline" id="phoneErr">يرجى إدخال رقم هاتفك</div>
+        </div>
+        <div class="gold-divider"></div>
+        <button class="btn-primary" onclick="goTo(1)">التالي ←</button>
+      </div>
+
+      <!-- Step 2: Service -->
+      <div class="step-panel" id="step1">
+        <div class="step-title">الخدمة المطلوبة 🦷</div>
+        <p class="step-hint">اختر الخدمة التي تحتاجها</p>
+        <div class="options-grid" id="servicesGrid"></div>
+        <div class="err-inline" id="serviceErr">يرجى اختيار خدمة</div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="goTo(2)">التالي ←</button>
+          <button class="btn-back" onclick="goTo(0)">→ رجوع</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Complaints -->
+      <div class="step-panel" id="step2">
+        <div class="step-title">ما الذي تشعر به؟ 😟</div>
+        <p class="step-hint">حدد أعراضك (يمكن أكثر من واحد)</p>
+        <div class="complaint-grid">
+          <div class="complaint-chip" onclick="toggleC(this,'ألم في السن')"><span class="chip-check">✓</span>ألم في السن</div>
+          <div class="complaint-chip" onclick="toggleC(this,'تورم في اللثة')"><span class="chip-check">✓</span>تورم في اللثة</div>
+          <div class="complaint-chip" onclick="toggleC(this,'حساسية الأسنان')"><span class="chip-check">✓</span>حساسية الأسنان</div>
+          <div class="complaint-chip" onclick="toggleC(this,'كسر في السن')"><span class="chip-check">✓</span>كسر في السن</div>
+          <div class="complaint-chip" onclick="toggleC(this,'نزيف اللثة')"><span class="chip-check">✓</span>نزيف اللثة</div>
+          <div class="complaint-chip" onclick="toggleC(this,'رائحة الفم')"><span class="chip-check">✓</span>رائحة الفم</div>
+          <div class="complaint-chip" onclick="toggleC(this,'أسنان مائلة')"><span class="chip-check">✓</span>أسنان مائلة</div>
+          <div class="complaint-chip" onclick="toggleC(this,'ألم عند المضغ')"><span class="chip-check">✓</span>ألم عند المضغ</div>
+          <div class="complaint-chip" onclick="toggleC(this,'مشكلة في التركيبة')"><span class="chip-check">✓</span>مشكلة في التركيبة</div>
+          <div class="complaint-chip" onclick="toggleC(this,'فحص روتيني')"><span class="chip-check">✓</span>فحص روتيني</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">تفاصيل إضافية (اختياري)</label>
+          <textarea class="form-input" id="extraNote" rows="2" placeholder="أي ملاحظات للدكتور..." style="resize:none;line-height:1.5"></textarea>
+        </div>
+        <div class="err-inline" id="complaintErr">يرجى تحديد شكواك</div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="goTo(3)">التالي ←</button>
+          <button class="btn-back" onclick="goTo(1)">→ رجوع</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Schedule -->
+      <div class="step-panel" id="step3">
+        <div class="step-title">اختر الموعد 📅</div>
+        <p class="step-hint">اختر اليوم والوقت المفضل</p>
+        <label class="form-label" style="margin-bottom:.45rem">اليوم المفضل</label>
+        <div class="day-row">
+          <button class="day-btn" onclick="selDay(this,'الأحد')">الأحد</button>
+          <button class="day-btn" onclick="selDay(this,'الاثنين')">الاثنين</button>
+          <button class="day-btn" onclick="selDay(this,'الثلاثاء')">الثلاثاء</button>
+          <button class="day-btn" onclick="selDay(this,'الأربعاء')">الأربعاء</button>
+          <button class="day-btn" onclick="selDay(this,'الخميس')">الخميس</button>
+          <button class="day-btn" onclick="selDay(this,'السبت')">السبت</button>
+        </div>
+        <label class="form-label" style="margin:.65rem 0 .45rem">الوقت المفضل</label>
+        <div class="time-slots">
+          <button class="time-btn" onclick="selTime(this,'9:00 - 10:00 ص')">9 - 10 ص</button>
+          <button class="time-btn" onclick="selTime(this,'10:00 - 11:00 ص')">10 - 11 ص</button>
+          <button class="time-btn" onclick="selTime(this,'11:00 - 12:00 م')">11 - 12 م</button>
+          <button class="time-btn" onclick="selTime(this,'12:00 - 1:00 م')">12 - 1 م</button>
+          <button class="time-btn" onclick="selTime(this,'2:00 - 3:00 م')">2 - 3 م</button>
+          <button class="time-btn" onclick="selTime(this,'3:00 - 4:00 م')">3 - 4 م</button>
+          <button class="time-btn" onclick="selTime(this,'4:00 - 5:00 م')">4 - 5 م</button>
+          <button class="time-btn" onclick="selTime(this,'5:00 - 6:00 م')">5 - 6 م</button>
+          <button class="time-btn" onclick="selTime(this,'أي وقت')">أي وقت</button>
+        </div>
+        <div class="err-inline" id="timeErr">يرجى تحديد يوم ووقت</div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="goTo(4)">مراجعة الطلب ←</button>
+          <button class="btn-back" onclick="goTo(2)">→ رجوع</button>
+        </div>
+      </div>
+
+      <!-- Step 5: Review -->
+      <div class="step-panel" id="step4">
+        <div class="step-title">مراجعة وإرسال 📋</div>
+        <p class="step-hint">تحقق من بياناتك قبل الإرسال</p>
+        <div class="summary-box" id="summaryBox"></div>
+        <button class="whatsapp-btn" id="sendBtn" onclick="submitBooking()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.554 4.11 1.522 5.839L.057 23.7a.5.5 0 00.617.629l5.96-1.527A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.83 9.83 0 01-5.02-1.376l-.36-.213-3.733.957.993-3.627-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+          إرسال الطلب للدكتور عبر واتساب
+        </button>
+        <button class="btn-back" style="width:100%;margin-top:.65rem;text-align:center" onclick="goTo(3)">→ تعديل</button>
+      </div>
+
+      <!-- Success -->
+      <div class="step-panel" id="stepSuccess">
+        <div class="success-screen">
+          <div class="success-icon">🎉</div>
+          <div class="success-title">تم إرسال طلبك!</div>
+          <p class="success-msg">وصل طلبك للدكتور. سيتواصل معك قريباً لتأكيد الموعد.</p>
+          <div class="success-box" id="successSummaryBox"></div>
+          <button class="btn-primary" onclick="resetForm()" style="margin-top:0">حجز موعد جديد ←</button>
+          <button class="btn-outline" onclick="afterBookingViewAppts()">متابعة مواعيدي →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PATIENT MODE ========== -->
+    <div id="patientMode" style="display:none">
+
+      <!-- Login panel -->
+      <div id="patientLogin" class="patient-login-panel">
+        <div class="step-title">مواعيدي ووصفاتي 📋</div>
+        <p class="step-hint">أدخل رقم هاتفك لعرض مواعيدك الحالية والسابقة ووصفاتك الطبية</p>
+        <div class="form-group">
+          <label class="form-label">رقم الهاتف المسجل</label>
+          <input class="form-input" id="loginPhone" type="tel" placeholder="05x-xxx-xxxx" dir="ltr" style="text-align:right" onkeydown="if(event.key==='Enter')patientLogin()"/>
+          <div class="err-inline" id="loginPhoneErr">رقم الهاتف غير موجود في سجلاتنا</div>
+        </div>
+        <button class="btn-primary" id="loginBtn" onclick="patientLogin()">عرض مواعيدي ←</button>
+        <div class="gold-divider"></div>
+        <p style="text-align:center;color:var(--text-muted);font-size:.82rem">لم تحجز من قبل؟</p>
+        <button class="btn-outline" onclick="switchMode('booking',document.getElementById('tabBooking'))">حجز موعد جديد →</button>
+      </div>
+
+      <!-- Dashboard panel -->
+      <div id="patientDashboard" class="patient-dashboard-panel"></div>
+    </div>
+  </div>
+
+  <div class="footer" id="footerText"></div>
+</div>
+
+<!-- Error screens -->
+<div class="page" id="expiredPage" style="display:none">
+  <div class="error-screen"><div class="error-icon">⏰</div><div class="error-title">انتهى الاشتراك</div><p class="error-msg-text">اشتراك هذه العيادة منتهٍ مؤقتاً. يرجى التواصل مع إدارة العيادة.</p></div>
+</div>
+<div class="page" id="notFoundPage" style="display:none">
+  <div class="error-screen"><div class="error-icon">🔍</div><div class="error-title">العيادة غير موجودة</div><p class="error-msg-text">تأكد من صحة الرابط أو تواصل مع العيادة للحصول على الرابط الصحيح.</p></div>
+</div>
+
+<script>
+const SB_URL='https://mcyymirzzefhhutiofsw.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jeXltaXJ6emVmaGh1dGlvZnN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjQxMTAsImV4cCI6MjA5NDg0MDExMH0.82-EY5XTdCEcLbuRi_6gbjpeq1IEqAP-wm-OxV-OSLc';
+const GEMINI_KEY='AIzaSyAH6a9jEPb1lk5QfERovesMLOJ14rf5Uvk';
+const H={'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,'Content-Type':'application/json'};
+
+let clinic=null;
+let currentStep=0;
+const state={name:'',phone:'',service:'',complaints:[],note:'',day:'',time:''};
+
+// ── Helpers ──────────────────────────────────────
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+function getSlug(){return window.location.pathname.split('/').filter(x=>x)[0]||null;}
+async function sb(path,opts={}){const r=await fetch(SB_URL+path,{headers:H,...opts});return r.json();}
+function hexToRgb(h){const r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);return r?{r:parseInt(r[1],16),g:parseInt(r[2],16),b:parseInt(r[3],16)}:null;}
+function badgeHTML(s){const m={pending:'b-pending ⏳ انتظار',confirmed:'b-confirmed ✅ مؤكد',completed:'b-completed 🏁 مكتمل',cancelled:'b-cancelled ❌ ملغي'};const[cls,...rest]=(m[s]||'b-pending ⏳ انتظار').split(' ');return `<span class="badge ${cls}">${rest.join(' ')}</span>`;}
+function fmtDate(d){return d?new Date(d).toLocaleDateString('ar-EG',{day:'2-digit',month:'2-digit',year:'numeric'}):'—';}
+
+// ── Init ─────────────────────────────────────────
+async function init(){
+  const slug=getSlug();
+  if(!slug){show('notFoundPage');return;}
+  try{
+    const data=await sb(`/rest/v1/clinics?slug=eq.${slug}&select=*`);
+    if(!data||!data[0]){show('notFoundPage');return;}
+    clinic=data[0];
+    const now=new Date();
+    const subEnd=clinic.subscription_ends_at?new Date(clinic.subscription_ends_at):new Date(clinic.trial_ends_at);
+    if(!clinic.is_active||subEnd<now){show('expiredPage');return;}
+    applyBranding();
+    await loadServices();
+    await loadWorkingHours();
+    loadChatServices();
+    hide('loadingScreen');
+    document.getElementById('mainPage').style.display='flex';
+  }catch(e){show('notFoundPage');}
+}
+
+function show(id){hide('loadingScreen');['expiredPage','notFoundPage','mainPage'].forEach(p=>hide(p));document.getElementById(id).style.display='flex';}
+function hide(id){document.getElementById(id).style.display='none';}
+
+function applyBranding(){
+  const c=clinic.primary_color||'#C9A84C';
+  document.documentElement.style.setProperty('--primary',c);
+  const rgb=hexToRgb(c);
+  if(rgb)document.documentElement.style.setProperty('--primary-rgb',`${rgb.r},${rgb.g},${rgb.b}`);
+  const logoHTML=clinic.logo_url
+    ?`<img class="logo-img" src="${esc(clinic.logo_url)}" alt="${esc(clinic.name)}">`
+    :`<div class="logo-placeholder">🦷</div>`;
+  document.getElementById('logoArea').innerHTML=`${logoHTML}<div class="logo-title">${esc(clinic.name)}</div><div class="logo-sub">${esc(clinic.specialty||'Dental Clinic')}</div>`;
+  document.getElementById('welcomeHint').textContent=`نسعد بخدمتك في ${clinic.name}. ابدأ بتعريف نفسك.`;
+  document.getElementById('footerText').textContent=`${clinic.name} | ${clinic.specialty||'Dental Clinic'}`;
+  document.title=`حجز موعد - ${clinic.name}`;
+}
+
+async function loadServices(){
+  const data=await sb(`/rest/v1/services?clinic_id=eq.${clinic.id}&is_active=eq.true&order=display_order`);
+  document.getElementById('servicesGrid').innerHTML=(data||[]).map(s=>`<button class="option-btn" data-service="${esc(s.name)}" onclick="selService(this)"><span class="opt-icon">${s.icon}</span>${esc(s.name)}</button>`).join('');
+}
+
+// ── Working Hours ────────────────────────────────
+async function loadWorkingHours(){
+  try{
+    const data=await sb(`/rest/v1/working_hours?clinic_id=eq.${clinic.id}&is_open=eq.true&select=day_name`);
+    if(data&&data.length>0){
+      openDays=data.map(d=>d.day_name);
+    }else{
+      // Default: all days open except Friday
+      openDays=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','السبت'];
+    }
+    renderDayButtons();
+  }catch(e){
+    openDays=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','السبت'];
+  }
+}
+function renderDayButtons(){
+  const allDays=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const container=document.querySelector('.day-row');
+  if(!container)return;
+  container.innerHTML=allDays.map(d=>{
+    const isOpen=openDays.includes(d);
+    return isOpen
+      ?`<button class="day-btn" onclick="selDay(this,'${d}')">${d}</button>`
+      :`<button class="day-btn" disabled style="opacity:.3;cursor:not-allowed" title="مغلق">${d} 🔒</button>`;
+  }).join('');
+}
+
+// ── Mode Switch ──────────────────────────────────
+function switchMode(mode,btn){
+  document.querySelectorAll('.mode-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('bookingMode').style.display=mode==='booking'?'block':'none';
+  document.getElementById('patientMode').style.display=mode==='patient'?'block':'none';
+}
+
+// ── Booking flow ─────────────────────────────────
+function updateDots(n){for(let i=0;i<5;i++){const d=document.getElementById('dot'+i);d.className='step-dot'+(i===n?' active':i<n?' done':'');}}
+function showStep(n){document.querySelectorAll('.step-panel').forEach((p,i)=>p.classList.toggle('active',i===n));updateDots(n);currentStep=n;window.scrollTo({top:0,behavior:'smooth'});}
+function clearErrs(){document.querySelectorAll('.err-inline').forEach(e=>e.classList.remove('show'));}
+function showErr(id){document.getElementById(id).classList.add('show');}
+
+function goTo(n){
+  clearErrs();
+  if(n>currentStep&&!validate(currentStep))return;
+  if(n===4)buildSummary();
+  showStep(n);
+}
+
+function validate(s){
+  if(s===0){
+    const nm=document.getElementById('patientName').value.trim();
+    const ph=document.getElementById('patientPhone').value.trim();
+    if(!nm){showErr('nameErr');return false;}
+    if(!ph){showErr('phoneErr');return false;}
+    state.name=nm;state.phone=ph;return true;
+  }
+  if(s===1){if(!state.service){showErr('serviceErr');return false;}return true;}
+  if(s===2){
+    state.complaints=[...document.querySelectorAll('.complaint-chip.selected')].map(c=>c.dataset.val);
+    state.note=document.getElementById('extraNote').value.trim();
+    if(!state.complaints.length){showErr('complaintErr');return false;}
+    return true;
+  }
+  if(s===3){if(!state.day||!state.time){showErr('timeErr');return false;}return true;}
+  return true;
+}
+
+function selService(btn){document.querySelectorAll('#servicesGrid .option-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');state.service=btn.dataset.service;clearErrs();}
+function toggleC(el,val){el.dataset.val=val;el.classList.toggle('selected');clearErrs();}
+function selDay(btn,val){document.querySelectorAll('.day-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');state.day=val;clearErrs();}
+function selTime(btn,val){document.querySelectorAll('.time-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');state.time=val;clearErrs();}
+
+function buildSummary(){
+  state.complaints=[...document.querySelectorAll('.complaint-chip.selected')].map(c=>c.dataset.val);
+  state.note=document.getElementById('extraNote').value.trim();
+  const rows=[['👤 الاسم',state.name],['📞 الهاتف',state.phone],['🦷 الخدمة',state.service],['😟 الشكوى',state.complaints.join(' • ')],['📅 اليوم',state.day],['🕐 الوقت',state.time]];
+  if(state.note)rows.push(['📝 ملاحظة',state.note]);
+  document.getElementById('summaryBox').innerHTML=rows.map(([l,v])=>`<div class="summary-row"><span class="summary-label">${l}</span><span class="summary-val">${esc(v)||'—'}</span></div>`).join('');
+}
+
+async function submitBooking(){
+  const btn=document.getElementById('sendBtn');
+  btn.disabled=true;
+  const origHTML=btn.innerHTML;
+  btn.innerHTML='⏳ جاري الإرسال...';
+  try{
+    await fetch(`${SB_URL}/rest/v1/appointments`,{method:'POST',headers:{...H,'Prefer':'return=minimal'},
+      body:JSON.stringify({clinic_id:clinic.id,patient_name:state.name,patient_phone:state.phone,service:state.service,complaints:state.complaints.join(' | '),note:state.note,preferred_day:state.day,preferred_time:state.time,status:'pending'})});
+  }catch(e){}
+  const msg=`🦷 *طلب موعد جديد*\n*${clinic.name}*\n${'━'.repeat(20)}\n👤 *الاسم:* ${state.name}\n📞 *الهاتف:* ${state.phone}\n${'━'.repeat(20)}\n🦷 *الخدمة:* ${state.service}\n😟 *الشكوى:* ${state.complaints.join(' | ')}\n${state.note?`📝 *ملاحظة:* ${state.note}\n`:''}${'━'.repeat(20)}\n📅 *اليوم:* ${state.day}\n🕐 *الوقت:* ${state.time}\n${'━'.repeat(20)}\n✅ تم الإرسال من نموذج الحجز الإلكتروني`;
+  window.open(`https://wa.me/${clinic.whatsapp}?text=${encodeURIComponent(msg)}`,'_blank');
+  document.getElementById('successSummaryBox').innerHTML=`<strong style="color:var(--primary)">✅ بيانات حجزك:</strong><br>${esc(state.name)} | ${esc(state.service)}<br>${esc(state.day)} — ${esc(state.time)}`;
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('stepSuccess').classList.add('active');
+  document.querySelectorAll('.step-dot').forEach(d=>d.className='step-dot done');
+  btn.disabled=false;
+  btn.innerHTML=origHTML;
+}
+
+function resetForm(){
+  Object.assign(state,{name:'',phone:'',service:'',complaints:[],note:'',day:'',time:''});
+  document.getElementById('patientName').value='';
+  document.getElementById('patientPhone').value='';
+  document.getElementById('extraNote').value='';
+  document.querySelectorAll('.option-btn,.complaint-chip,.day-btn,.time-btn').forEach(el=>el.classList.remove('selected'));
+  showStep(0);
+}
+
+function afterBookingViewAppts(){
+  const phone=state.phone;
+  resetForm();
+  switchMode('patient',document.getElementById('tabPatient'));
+  document.getElementById('loginPhone').value=phone;
+  patientLogin();
+}
+
+// ── Patient login & dashboard ────────────────────
+async function patientLogin(){
+  const phone=document.getElementById('loginPhone').value.trim();
+  const errEl=document.getElementById('loginPhoneErr');
+  errEl.classList.remove('show');
+  if(!phone){errEl.textContent='أدخل رقم هاتفك';errEl.classList.add('show');return;}
+  const btn=document.getElementById('loginBtn');
+  btn.disabled=true;btn.textContent='جاري البحث...';
+  try{
+    const [appts,rxList]=await Promise.all([
+      sb(`/rest/v1/appointments?clinic_id=eq.${clinic.id}&patient_phone=eq.${encodeURIComponent(phone)}&select=*&order=created_at.desc`),
+      sb(`/rest/v1/prescriptions?clinic_id=eq.${clinic.id}&patient_phone=eq.${encodeURIComponent(phone)}&select=*&order=created_at.desc`)
+    ]);
+    if(!appts||!appts.length){errEl.textContent='لا توجد سجلات بهذا الرقم في عيادتنا';errEl.classList.add('show');btn.disabled=false;btn.textContent='عرض مواعيدي ←';return;}
+    renderPatientDashboard(phone,appts,rxList||[]);
+  }catch(e){errEl.textContent='حدث خطأ، حاول مجدداً';errEl.classList.add('show');}
+  btn.disabled=false;btn.textContent='عرض مواعيدي ←';
+}
+
+function renderPatientDashboard(phone,appts,rxList){
+  const name=appts[0]?.patient_name||'المريض';
+  const upcoming=appts.filter(a=>a.status==='pending'||a.status==='confirmed');
+  const past=appts.filter(a=>a.status==='completed'||a.status==='cancelled');
+
+  document.getElementById('patientLogin').style.display='none';
+  const dash=document.getElementById('patientDashboard');
+  dash.style.display='block';
+
+  dash.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div><div class="step-title" style="margin-bottom:.1rem">أهلاً، ${esc(name)} 👋</div><div style="font-size:.8rem;color:var(--text-muted)">${esc(phone)}</div></div>
+      <button onclick="resetPatient()" style="background:none;border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:.35rem .75rem;color:var(--text-muted);cursor:pointer;font-family:'Tajawal',sans-serif;font-size:.8rem">تسجيل خروج</button>
+    </div>
+    <div class="p-stats">
+      <div class="pstat"><div class="pstat-num">${appts.length}</div><div class="pstat-lbl">إجمالي الزيارات</div></div>
+      <div class="pstat"><div class="pstat-num" style="color:#25a244">${upcoming.length}</div><div class="pstat-lbl">مواعيد قادمة</div></div>
+      <div class="pstat"><div class="pstat-num" style="color:#6bb5ff">${rxList.length}</div><div class="pstat-lbl">وصفات طبية</div></div>
+    </div>
+
+    ${upcoming.length?`
+    <div class="p-section-title">📅 المواعيد القادمة</div>
+    <div class="appt-list">${upcoming.map(a=>apptCardHTML(a)).join('')}</div>
+    `:''}
+
+    ${rxList.length?`
+    <div class="p-section-title">💊 الوصفات الطبية</div>
+    <div>${rxList.map(r=>rxCardHTML(r)).join('')}</div>
+    `:''}
+
+    ${past.length?`
+    <div class="p-section-title">🕐 السجل السابق</div>
+    <div class="appt-list">${past.map(a=>apptCardHTML(a)).join('')}</div>
+    `:''}
+
+    ${!upcoming.length&&!past.length?`<div class="empty-mini">📭 لا توجد مواعيد بعد</div>`:''}
+
+    <div class="gold-divider"></div>
+    <button class="btn-primary" style="margin-top:0" onclick="switchModeAndPrefill('${esc(name)}','${esc(phone)}')">📅 حجز موعد جديد ←</button>
+  `;
+}
+
+function apptCardHTML(a){
+  return `<div class="appt-card">
+    <div class="appt-top"><span class="appt-service">🦷 ${esc(a.service)}</span>${badgeHTML(a.status)}</div>
+    <div class="appt-meta">
+      ${a.preferred_day?`📅 ${esc(a.preferred_day)}${a.preferred_time?' — '+esc(a.preferred_time):''}`:''}<br>
+      ${a.complaints?`😟 ${esc(a.complaints.replace(/\|/g,'•'))}`:''}<br>
+      <span style="font-size:.75rem">🗓 ${fmtDate(a.created_at)}</span>
+    </div>
+    ${a.doctor_notes&&a.notes_visible!==false?`<div class="appt-notes">💬 ملاحظة الدكتور: ${esc(a.doctor_notes)}</div>`:''}
+  </div>`;
+}
+
+function rxCardHTML(r){
+  return `<div class="rx-card">
+    <div class="rx-name">💊 ${esc(r.medication_name)}</div>
+    <div class="rx-detail">
+      ${r.dosage?`🔢 الجرعة: ${esc(r.dosage)}<br>`:''}
+      ${r.duration?`⏱ المدة: ${esc(r.duration)}<br>`:''}
+      ${r.instructions?`📋 التعليمات: ${esc(r.instructions)}<br>`:''}
+      <span style="font-size:.75rem">📅 ${fmtDate(r.prescribed_at||r.created_at)}</span>
+    </div>
+  </div>`;
+}
+
+function resetPatient(){
+  document.getElementById('patientLogin').style.display='block';
+  document.getElementById('patientDashboard').style.display='none';
+  document.getElementById('patientDashboard').innerHTML='';
+  document.getElementById('loginPhone').value='';
+}
+
+function switchModeAndPrefill(name,phone){
+  switchMode('booking',document.getElementById('tabBooking'));
+  document.getElementById('patientName').value=name;
+  document.getElementById('patientPhone').value=phone;
+  state.name=name;state.phone=phone;
+}
+
+// Particles
+for(let i=0;i<20;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  p.style.cssText=`left:${Math.random()*100}%;background:var(--primary,#C9A84C);width:${1+Math.random()*3}px;height:${1+Math.random()*3}px;animation-duration:${8+Math.random()*12}s;animation-delay:${Math.random()*10}s`;
+  document.body.appendChild(p);
+}
+
+init();
+
+// ── AI Chatbot ────────────────────────────────────
+let chatOpen=false,chatHistory=[],chatServices=[];
+async function gemini(prompt,history=[]){
+  try{
+    const msgs=[{role:'user',parts:[{text:'أنت مساعد ودي لعيادة أسنان. ساعد المريض يصف أعراضه ويختار الخدمة المناسبة من القائمة المتاحة. كن مختصراً وودياً وباللهجة العربية البسيطة. لا تقدم تشخيصات طبية دقيقة. متاح: '+chatServices.join('، ')}]}];
+    history.forEach(m=>msgs.push({role:m.role,parts:[{text:m.text}]}));
+    msgs.push({role:'user',parts:[{text:prompt}]});
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+GEMINI_KEY,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:msgs,generationConfig:{maxOutputTokens:200,temperature:0.8}})
+    });
+    const data=await r.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text||'عذراً، حدث خطأ. حاول مرة أخرى.';
+  }catch(e){return 'عذراً، لا يوجد اتصال.';}
+}
+function toggleChat(){
+  chatOpen=!chatOpen;
+  document.getElementById('chatPanel').classList.toggle('open',chatOpen);
+  if(chatOpen&&chatHistory.length===0)initChat();
+}
+async function initChat(){
+  const msgs=document.getElementById('chatMsgs');
+  addMsg('مرحباً! 👋 أنا المساعد الذكي للعيادة.
+
+صفلي شو بتحس فيه وبساعدك تختار الخدمة المناسبة 😊','ai');
+}
+function addMsg(text,role,chips=[]){
+  const msgs=document.getElementById('chatMsgs');
+  const div=document.createElement('div');
+  div.className='msg msg-'+role;
+  div.textContent=text;
+  msgs.appendChild(div);
+  if(chips.length){
+    const chipsDiv=document.createElement('div');
+    chipsDiv.style.marginTop='.4rem';
+    chips.forEach(c=>{
+      const chip=document.createElement('span');
+      chip.className='svc-chip';
+      chip.textContent=c;
+      chip.onclick=()=>selectService(c);
+      chipsDiv.appendChild(chip);
+    });
+    msgs.appendChild(chipsDiv);
+  }
+  msgs.scrollTop=msgs.scrollHeight;
+}
+function selectService(svc){
+  // Switch to booking tab and select service
+  document.querySelectorAll('.mode-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tabBooking').classList.add('active');
+  document.getElementById('bookingMode').style.display='block';
+  document.getElementById('patientMode').style.display='none';
+  // Go to service step
+  showStep(1);
+  setTimeout(()=>{
+    const btns=document.querySelectorAll('#servicesGrid .option-btn');
+    btns.forEach(btn=>{if(btn.dataset.service===svc){btn.click();}});
+  },300);
+  toggleChat();
+  toast('✅ تم اختيار: '+svc);
+}
+async function sendChat(){
+  const inp=document.getElementById('chatInp');
+  const text=inp.value.trim();
+  if(!text)return;
+  inp.value='';
+  addMsg(text,'user');
+  chatHistory.push({role:'user',text});
+  // Typing indicator
+  const msgs=document.getElementById('chatMsgs');
+  const typing=document.createElement('div');
+  typing.className='msg msg-ai msg-typing';
+  typing.id='typing';
+  typing.textContent='🤖 يكتب...';
+  msgs.appendChild(typing);
+  msgs.scrollTop=msgs.scrollHeight;
+  const response=await gemini(text,chatHistory.slice(-4));
+  document.getElementById('typing')?.remove();
+  chatHistory.push({role:'model',text:response});
+  // Check if response suggests a service
+  const matchedSvcs=chatServices.filter(s=>response.includes(s));
+  addMsg(response,'ai',matchedSvcs.slice(0,3));
+}
+// Init chatbot after clinic loads
+// chatbot ready
+// Load services for chatbot after clinic init
+async function loadChatServices(){
+  const data=await sb(`/rest/v1/services?clinic_id=eq.${clinic.id}&is_active=eq.true&order=display_order`);
+  chatServices=(data||[]).map(s=>s.name);
+  document.getElementById('chatBubble').style.display='block';
+}
+</script>
+
+<!-- AI Chatbot -->
+<div class="chat-bubble" id="chatBubble" style="display:none">
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-header">
+      <span>🤖 مساعد العيادة الذكي</span>
+      <button class="chat-close" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="chat-msgs" id="chatMsgs"></div>
+    <div class="chat-input-row">
+      <button class="chat-send" onclick="sendChat()">↑</button>
+      <input class="chat-inp" id="chatInp" type="text" placeholder="اكتب أعراضك..." onkeydown="if(event.key==='Enter')sendChat()"/>
+    </div>
+  </div>
+  <button class="chat-toggle" onclick="toggleChat()" title="مساعد ذكي">🤖</button>
+</div>
+</body>
+</html>
