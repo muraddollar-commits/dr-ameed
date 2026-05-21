@@ -1,0 +1,7 @@
+{
+  "routes": [
+    { "src": "/super-admin", "dest": "/super-admin.html" },
+    { "src": "/([a-z0-9-]+)/admin", "dest": "/admin.html" },
+    { "src": "/([a-z0-9-]+)", "dest": "/booking.html" }
+  ]
+}
