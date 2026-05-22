@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="/manifest.json">
+<title>لوحة التحكم</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --gold:#C9A84C;--gold-l:#E8C97A;--gold-d:rgba(201,168,76,.13);
+  --bg:#07071A;--bg2:#0D0D25;--bg3:#121230;--bg4:#181840;
+  --sf:rgba(255,255,255,.04);--sf2:rgba(255,255,255,.08);
+  --br:rgba(201,168,76,.1);--br2:rgba(255,255,255,.06);
+  --tx:#E5E1D8;--tx2:#8A8699;--tx3:#5A5670;
+  --gr:#22C55E;--rd:#EF4444;--or:#F59E0B;--bl:#60A5FA;--pu:#A78BFA;
+  --sw:220px;--r:16px;--r2:10px;--sh:0 8px 40px rgba(0,0,0,.6);--tr:.22s cubic-bezier(.4,0,.2,1);
+}
+body.lm{
+  --bg:#F0F1F8;--bg2:#FFF;--bg3:#E8EAF4;--bg4:#DDE0EE;
+  --sf:rgba(0,0,0,.03);--sf2:rgba(0,0,0,.07);
+  --br:rgba(0,0,0,.09);--br2:rgba(0,0,0,.06);
+  --tx:#1A1830;--tx2:#5A5570;--tx3:#8A87A0;--sh:0 8px 32px rgba(0,0,0,.1);
+}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--tx);direction:rtl;min-height:100vh;transition:background .3s,color .3s;}
+
+/* LOGIN */
+.lp{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;
+  background:radial-gradient(ellipse 70% 50% at 25% 25%,rgba(201,168,76,.07),transparent 55%),radial-gradient(ellipse 50% 40% at 80% 75%,rgba(167,139,250,.05),transparent 50%);}
+.lc{background:var(--bg2);border:1px solid var(--br);border-radius:24px;width:100%;max-width:400px;padding:2.5rem 2rem;box-shadow:var(--sh);}
+.ll{text-align:center;font-size:2.8rem;margin-bottom:.9rem;}
+.lt{font-family:'Amiri',serif;font-size:1.65rem;color:var(--gold-l);text-align:center;margin-bottom:.2rem;}
+.ls{text-align:center;color:var(--tx2);font-size:.83rem;margin-bottom:1.8rem;}
+.le{color:var(--rd);font-size:.82rem;text-align:center;margin-bottom:.9rem;padding:.5rem;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);border-radius:8px;display:none;}
+.le.on{display:block;}
+.fl{display:block;font-size:.8rem;color:var(--gold);margin-bottom:.35rem;font-weight:600;}
+.fi{width:100%;background:var(--sf);border:1px solid var(--br);border-radius:12px;padding:.88rem 1rem;color:var(--tx);font-family:'Tajawal',sans-serif;font-size:.95rem;outline:none;transition:var(--tr);margin-bottom:1.2rem;}
+.fi:focus{border-color:var(--gold);background:rgba(201,168,76,.05);}
+.pb{width:100%;background:linear-gradient(135deg,#B8922A,#E8C97A,#B8922A);background-size:200%;border:none;border-radius:14px;padding:1rem;color:#070714;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:var(--tr);}
+.pb:hover{background-position:100%;box-shadow:0 6px 24px rgba(201,168,76,.35);}
+
+/* LAYOUT */
+.ap{display:none;min-height:100vh;}
+.sb{position:fixed;right:0;top:0;width:var(--sw);height:100vh;background:var(--bg2);border-left:1px solid var(--br2);z-index:50;display:flex;flex-direction:column;transition:transform .3s ease;overflow-y:auto;}
+.sbh{padding:1.2rem 1rem;border-bottom:1px solid var(--br2);}
+.cb{display:flex;align-items:center;gap:.65rem;}
+.ci{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold-l));display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0;}
+.cn{font-size:.88rem;font-weight:700;color:var(--tx);line-height:1.25;}
+.cd{font-size:.7rem;color:var(--tx2);}
+.nv{flex:1;padding:.6rem 0;}
+.ng{padding:0 .75rem .2rem;font-size:.62rem;color:var(--tx3);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-top:.7rem;}
+.ng:first-child{margin-top:0;}
+.ni{display:flex;align-items:center;gap:.65rem;padding:.7rem .85rem;color:var(--tx2);cursor:pointer;border-radius:10px;margin:0 .45rem .12rem;transition:var(--tr);font-size:.85rem;position:relative;}
+.ni:hover{color:var(--tx);background:var(--sf2);}
+.ni.ac{color:var(--gold-l);background:var(--gold-d);}
+.ni.ac::before{content:'';position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:3px;height:55%;background:var(--gold);border-radius:3px;}
+.nic{font-size:.9rem;flex-shrink:0;width:18px;text-align:center;}
+.sbf{padding:.85rem .75rem;border-top:1px solid var(--br2);display:flex;align-items:center;gap:.4rem;}
+.aii{font-size:.66rem;color:rgba(167,139,250,.45);text-align:center;padding:.15rem .4rem .2rem;}
+.tb{background:var(--sf);border:1px solid var(--br2);border-radius:8px;padding:.42rem .65rem;color:var(--tx2);cursor:pointer;font-size:.85rem;transition:var(--tr);flex-shrink:0;}
+.tb:hover{background:var(--sf2);color:var(--tx);}
+.out{flex:1;background:transparent;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:.42rem;color:var(--rd);font-family:'Tajawal',sans-serif;font-size:.8rem;cursor:pointer;transition:var(--tr);}
+.out:hover{background:rgba(239,68,68,.08);}
+.hb{display:none;position:fixed;top:1rem;left:1rem;z-index:60;background:var(--bg2);border:1px solid var(--br);border-radius:10px;width:40px;height:40px;align-items:center;justify-content:center;cursor:pointer;color:var(--gold);font-size:1.25rem;}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:40;display:none;}
+.ov.on{display:block;}
+.mn{margin-right:var(--sw);padding:2rem;min-height:100vh;}
+.sec{display:none;}.sec.on{display:block;}
+
+/* TOPBAR */
+.tb2{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;flex-wrap:wrap;gap:.75rem;}
+.pt{font-family:'Amiri',serif;font-size:1.45rem;color:var(--gold-l);}
+.pt2{font-size:.78rem;color:var(--tx2);margin-top:.1rem;}
+.tr{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;}
+.lv{display:flex;align-items:center;gap:.4rem;font-size:.73rem;color:var(--tx2);background:var(--sf);border:1px solid var(--br2);border-radius:20px;padding:.28rem .7rem;}
+.ld{width:6px;height:6px;border-radius:50%;background:var(--gr);animation:p 2s infinite;}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+.ab{background:linear-gradient(135deg,#B8922A,#E8C97A);border:none;border-radius:10px;padding:.52rem 1.05rem;color:#070714;font-family:'Tajawal',sans-serif;font-size:.83rem;font-weight:700;cursor:pointer;transition:var(--tr);}
+.ab:hover{box-shadow:0 4px 16px rgba(201,168,76,.4);transform:translateY(-1px);}
+
+/* STAT CARDS — Tesla style */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
+.sc{background:var(--bg2);border:1px solid var(--br2);border-radius:var(--r);padding:1.3rem 1.4rem;cursor:pointer;transition:var(--tr);position:relative;overflow:hidden;}
+.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:var(--tr);}
+.sc:hover{transform:translateY(-3px);box-shadow:var(--sh);}
+.sc-ic{font-size:1.5rem;margin-bottom:.7rem;display:block;}
+.sc-v{font-size:2.1rem;font-weight:900;line-height:1;margin-bottom:.25rem;}
+.sc-l{font-size:.73rem;color:var(--tx2);font-weight:500;}
+.sc-hint{font-size:.68rem;color:var(--tx3);margin-top:.35rem;}
+.s1 .sc-v{color:var(--gold-l);}.s1::after{background:var(--gold);}.s1:hover::after{opacity:1;}
+.s2 .sc-v{color:var(--or);}.s2::after{background:var(--or);}.s2:hover::after{opacity:1;}
+.s3 .sc-v{color:var(--gr);}.s3::after{background:var(--gr);}.s3:hover::after{opacity:1;}
+.s4 .sc-v{color:var(--pu);}.s4::after{background:var(--pu);}.s4:hover::after{opacity:1;}
+
+/* BRIEFING */
+.brf{background:linear-gradient(135deg,rgba(10,10,30,.95),rgba(18,18,50,.9));border:1px solid rgba(167,139,250,.15);border-radius:var(--r);padding:1.2rem 1.5rem;margin-bottom:1.5rem;position:relative;overflow:hidden;}
+body.lm .brf{background:linear-gradient(135deg,rgba(240,238,255,.95),rgba(230,228,255,.9));}
+.brf::before{content:'';position:absolute;top:-40%;right:-5%;width:180px;height:180px;background:radial-gradient(circle,rgba(167,139,250,.06),transparent 70%);pointer-events:none;}
+.brfh{display:flex;align-items:center;gap:.75rem;margin-bottom:.8rem;}
+.brfi{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#7c3aed,var(--pu));display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
+.brft{font-size:.88rem;font-weight:700;color:var(--pu);}
+.brfti{font-size:.72rem;color:var(--tx2);margin-right:auto;}
+.brfr{background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);border-radius:7px;padding:.28rem .6rem;color:var(--pu);font-family:'Tajawal',sans-serif;font-size:.72rem;cursor:pointer;}
+.brfb{font-size:.88rem;line-height:1.85;color:var(--tx);}
+.ald{display:flex;align-items:center;gap:.45rem;color:var(--tx2);font-size:.83rem;}
+.ad{width:5px;height:5px;border-radius:50%;background:var(--pu);animation:adp 1.2s ease infinite;}
+.ad:nth-child(2){animation-delay:.2s;}.ad:nth-child(3){animation-delay:.4s;}
+@keyframes adp{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+
+/* CARD */
+.cd2{background:var(--bg2);border:1px solid var(--br2);border-radius:var(--r);overflow:hidden;margin-bottom:1.5rem;}
+.cdh{padding:1rem 1.4rem;border-bottom:1px solid var(--br2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;}
+.cdt{font-size:.92rem;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:.45rem;}
+.cda{display:flex;gap:.45rem;align-items:center;flex-wrap:wrap;}
+.ib{background:var(--sf);border:1px solid var(--br2);border-radius:8px;padding:.35rem .72rem;color:var(--tx2);font-family:'Tajawal',sans-serif;font-size:.78rem;cursor:pointer;transition:var(--tr);white-space:nowrap;}
+.ib:hover{background:var(--sf2);color:var(--tx);}
+
+/* FILTERS */
+.frow{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;padding:.8rem 1.2rem;border-bottom:1px solid var(--br2);}
+.fc{background:var(--sf);border:1px solid var(--br2);border-radius:20px;padding:.32rem .82rem;color:var(--tx2);font-family:'Tajawal',sans-serif;font-size:.78rem;cursor:pointer;transition:var(--tr);white-space:nowrap;}
+.fc:hover{border-color:var(--br);color:var(--tx);}
+.fc.on{border-color:var(--gold);background:var(--gold-d);color:var(--gold-l);font-weight:600;}
+.si{background:var(--sf);border:1px solid var(--br2);border-radius:20px;padding:.35rem 1rem;color:var(--tx);font-family:'Tajawal',sans-serif;font-size:.78rem;outline:none;min-width:160px;margin-right:auto;}
+.si:focus{border-color:var(--gold);}
+.si::placeholder{color:var(--tx3);}
+
+/* TABLE */
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:500px;}
+th{padding:.82rem 1.2rem;text-align:right;font-size:.73rem;color:var(--gold);font-weight:600;border-bottom:1px solid var(--br2);white-space:nowrap;}
+td{padding:.88rem 1.2rem;font-size:.83rem;vertical-align:middle;border-bottom:1px solid var(--br2);}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr{transition:background .12s;}
+tbody tr:hover{background:var(--sf);}
+.tn{font-weight:700;color:var(--tx);cursor:pointer;transition:color .15s;}
+.tn:hover{color:var(--gold-l);}
+.ts{color:var(--tx2);font-size:.73rem;margin-top:.12rem;}
+.tsv{color:var(--bl);font-size:.83rem;}
+
+/* BADGES */
+.bg{display:inline-flex;align-items:center;gap:.2rem;border-radius:20px;padding:.2rem .65rem;font-size:.71rem;font-weight:700;white-space:nowrap;}
+.bp{background:rgba(245,158,11,.12);color:var(--or);border:1px solid rgba(245,158,11,.22);}
+.bc{background:rgba(34,197,94,.12);color:var(--gr);border:1px solid rgba(34,197,94,.22);}
+.bca{background:rgba(239,68,68,.1);color:var(--rd);border:1px solid rgba(239,68,68,.18);}
+.bco{background:rgba(96,165,250,.1);color:var(--bl);border:1px solid rgba(96,165,250,.18);}
+
+/* ACTION DROPDOWN */
+.aw{position:relative;display:inline-block;}
+.at{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.22);border-radius:8px;padding:.3rem .75rem;color:var(--gold);font-family:'Tajawal',sans-serif;font-size:.77rem;font-weight:600;cursor:pointer;transition:var(--tr);white-space:nowrap;}
+.at:hover{background:rgba(201,168,76,.2);box-shadow:0 2px 10px rgba(201,168,76,.18);}
+.adp{position:fixed;min-width:180px;background:var(--bg3);border:1px solid var(--br);border-radius:12px;box-shadow:0 16px 50px rgba(0,0,0,.7);z-index:500;overflow:hidden;display:none;}
+.adp.on{display:block;animation:din .14s ease;}
+@keyframes din{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.ai{display:flex;align-items:center;gap:.6rem;padding:.62rem .95rem;font-size:.83rem;cursor:pointer;transition:background .1s;border-bottom:1px solid var(--br2);color:var(--tx);white-space:nowrap;}
+.ai:last-child{border-bottom:none;}
+.ai:hover{background:var(--sf2);}
+.ai-ic{font-size:.85rem;flex-shrink:0;width:17px;}
+.a-gr:hover{background:rgba(34,197,94,.07);color:var(--gr);}
+.a-bl:hover{background:rgba(96,165,250,.07);color:var(--bl);}
+.a-or:hover{background:rgba(245,158,11,.07);color:var(--or);}
+.a-rd:hover{background:rgba(239,68,68,.07);color:var(--rd);}
+.a-gd:hover{background:var(--gold-d);color:var(--gold-l);}
+.a-pu:hover{background:rgba(167,139,250,.07);color:var(--pu);}
+.a-div{height:1px;background:var(--br2);margin:.22rem 0;}
+
+/* MOBILE CARDS */
+.mc{display:none;padding:.7rem;}
+.mca{background:var(--bg3);border:1px solid var(--br2);border-radius:var(--r2);padding:.88rem 1rem;margin-bottom:.45rem;}
+.mt{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.4rem;}
+.mn2{font-weight:700;font-size:.88rem;cursor:pointer;}
+.mn2:hover{color:var(--gold-l);}
+.mp{font-size:.72rem;color:var(--tx2);}
+.msv{color:var(--bl);font-size:.8rem;margin-bottom:.28rem;}
+.mm{font-size:.72rem;color:var(--tx2);margin-bottom:.5rem;}
+
+/* EMPTY + SPIN */
+.em{text-align:center;padding:2.5rem;color:var(--tx2);}
+.ei{font-size:2.2rem;margin-bottom:.6rem;opacity:.4;}
+.sp{width:26px;height:26px;border:2px solid var(--br);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .4rem;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* CALENDAR */
+.cnv{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.4rem;border-bottom:1px solid var(--br2);}
+.cb2{background:var(--sf);border:1px solid var(--br2);border-radius:8px;padding:.38rem .85rem;color:var(--tx2);font-family:'Tajawal',sans-serif;font-size:.8rem;cursor:pointer;transition:var(--tr);}
+.cb2:hover{background:var(--sf2);color:var(--tx);}
+.cw{display:grid;grid-template-columns:repeat(7,1fr);}
+.ch{text-align:center;padding:.58rem .2rem;font-size:.72rem;color:var(--gold);font-weight:600;border-bottom:1px solid var(--br2);}
+.cc{border-right:1px solid var(--br2);min-height:130px;padding:.38rem .32rem;}
+.cc:last-child{border-right:none;}
+.cc.td2{background:rgba(201,168,76,.04);}
+.cd3{font-size:.7rem;color:var(--tx2);margin-bottom:.28rem;font-weight:500;}
+.cc.td2 .cd3{color:var(--gold-l);font-weight:700;}
+.ck{border-radius:5px;padding:.18rem .38rem;font-size:.67rem;margin-bottom:.13rem;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .12s;}
+.ck:hover{opacity:.8;}
+.ck-p{background:rgba(245,158,11,.2);color:#F59E0B;}
+.ck-c{background:rgba(34,197,94,.2);color:#22C55E;}
+.ck-co{background:rgba(96,165,250,.15);color:var(--bl);}
+.ck-ca{background:rgba(239,68,68,.1);color:var(--rd);}
+
+/* SETTINGS */
+.stg{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+.stb{background:var(--bg2);border:1px solid var(--br2);border-radius:var(--r);padding:1.35rem;}
+.stbt{font-size:.88rem;font-weight:700;color:var(--tx);margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid var(--br2);}
+.fr{margin-bottom:.85rem;}
+.fs{display:block;font-size:.78rem;color:var(--gold);margin-bottom:.3rem;font-weight:600;}
+.fc2{width:100%;background:var(--sf);border:1px solid var(--br2);border-radius:9px;padding:.65rem .88rem;color:var(--tx);font-family:'Tajawal',sans-serif;font-size:.86rem;outline:none;transition:var(--tr);}
+.fc2:focus{border-color:var(--gold);}
+.sb2{background:linear-gradient(135deg,#B8922A,#E8C97A,#B8922A);background-size:200%;border:none;border-radius:9px;padding:.62rem 1.5rem;color:#070714;font-family:'Tajawal',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer;transition:var(--tr);margin-top:.38rem;}
+.sb2:hover{background-position:100%;box-shadow:0 4px 16px rgba(201,168,76,.3);}
+.sb2:disabled{opacity:.5;cursor:not-allowed;}
+
+/* SERVICES */
+.si2{display:flex;align-items:center;justify-content:space-between;padding:.58rem .82rem;background:var(--sf);border:1px solid var(--br2);border-radius:9px;margin-bottom:.38rem;gap:.5rem;flex-wrap:wrap;}
+.sn{font-size:.85rem;flex:1;}
+.sp2{background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.18);border-radius:6px;padding:.13rem .52rem;font-size:.73rem;color:var(--pu);}
+.sd{background:none;border:none;color:var(--rd);cursor:pointer;font-size:.9rem;padding:.18rem .38rem;opacity:.65;transition:opacity .12s;}
+.sd:hover{opacity:1;}
+.sar{display:flex;gap:.38rem;margin-top:.55rem;flex-wrap:wrap;}
+.sai{flex:1;min-width:75px;background:var(--sf);border:1px solid var(--br2);border-radius:9px;padding:.55rem .82rem;color:var(--tx);font-family:'Tajawal',sans-serif;font-size:.82rem;outline:none;}
+.sai:focus{border-color:var(--gold);}
+.sab{background:var(--gold-d);border:1px solid rgba(201,168,76,.22);border-radius:9px;padding:.55rem .95rem;color:var(--gold);font-family:'Tajawal',sans-serif;font-size:.82rem;cursor:pointer;white-space:nowrap;}
+
+/* HOURS */
+.hr{display:flex;align-items:center;justify-content:space-between;padding:.78rem .95rem;border-bottom:1px solid var(--br2);gap:.9rem;flex-wrap:wrap;}
+.hr:last-child{border-bottom:none;}
+.hl{display:flex;align-items:center;gap:.62rem;min-width:115px;}
+.dn{font-size:.86rem;font-weight:500;}
+.tg{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0;}
+.tg input{opacity:0;width:0;height:0;}
+.tgs{position:absolute;cursor:pointer;inset:0;background:var(--sf2);border-radius:22px;transition:.28s;}
+.tgs::before{content:'';position:absolute;width:16px;height:16px;right:3px;bottom:3px;background:var(--tx2);border-radius:50%;transition:.28s;}
+.tg input:checked+.tgs{background:rgba(34,197,94,.5);}
+.tg input:checked+.tgs::before{transform:translateX(-18px);background:#fff;}
+.ht{display:flex;align-items:center;gap:.45rem;transition:opacity .18s;}
+.ht.off{opacity:.22;pointer-events:none;}
+.tf{background:var(--sf);border:1px solid var(--br2);border-radius:7px;padding:.4rem .55rem;color:var(--tx);font-family:'Tajawal',sans-serif;font-size:.8rem;outline:none;width:84px;}
+.tf:focus{border-color:var(--gold);}
+
+/* PRESCRIPTIONS */
+.rxg{display:grid;gap:.62rem;padding:1rem 1.3rem;}
+.rxc{background:rgba(96,165,250,.04);border:1px solid rgba(96,165,250,.1);border-radius:var(--r2);padding:.88rem 1.05rem;display:flex;justify-content:space-between;align-items:flex-start;gap:.9rem;}
+.rxi{flex:1;}
+.rxp{font-weight:700;color:var(--gold-l);font-size:.86rem;margin-bottom:.18rem;cursor:pointer;}
+.rxp:hover{color:var(--gold);}
+.rxph{font-size:.73rem;color:var(--tx2);margin-bottom:.38rem;}
+.rxm{color:var(--bl);font-weight:600;font-size:.86rem;margin-bottom:.18rem;}
+.rxd{font-size:.76rem;color:var(--tx2);line-height:1.52;}
+.rxdl{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.13);border-radius:7px;padding:.22rem .55rem;color:var(--rd);font-family:'Tajawal',sans-serif;font-size:.71rem;cursor:pointer;flex-shrink:0;}
+.arb{background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.18);border-radius:10px;padding:.58rem 1.15rem;color:var(--bl);font-family:'Tajawal',sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;}
+
+/* PATIENT */
+.psr{display:flex;gap:.62rem;margin-bottom:1rem;}
+.psi{flex:1;background:var(--sf);border:1px solid var(--br2);border-radius:12px;padding:.78rem .95rem;color:var(--tx);font-family:'Tajawal',sans-serif;font-size:.92rem;outline:none;}
+.psi:focus{border-color:var(--gold);}
+.psb{background:linear-gradient(135deg,#B8922A,#E8C97A);border:none;border-radius:12px;padding:.78rem 1.4rem;color:#070714;font-family:'Tajawal',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;}
+.ph{background:linear-gradient(135deg,rgba(201,168,76,.07),rgba(167,139,250,.04));border:1px solid var(--br);border-radius:var(--r2);padding:.95rem 1.15rem;margin-bottom:1rem;}
+.pn{font-family:'Amiri',serif;font-size:1.2rem;color:var(--gold-l);margin-bottom:.28rem;}
+.pst{display:flex;gap:1.4rem;flex-wrap:wrap;}
+.ps{font-size:.82rem;color:var(--tx2);}
+.ps strong{color:var(--tx);}
+.pt3{font-size:.83rem;font-weight:700;color:var(--gold);margin:.82rem 0 .45rem;}
+.pa{display:flex;justify-content:space-between;align-items:center;padding:.55rem .82rem;background:var(--sf);border:1px solid var(--br2);border-radius:9px;margin-bottom:.32rem;font-size:.79rem;flex-wrap:wrap;gap:.38rem;}
+
+/* ANALYTICS */
+.bar{display:flex;align-items:center;gap:.65rem;margin-bottom:.78rem;}
+.bl2{font-size:.82rem;color:var(--tx);min-width:125px;text-align:right;}
+.bt{flex:1;background:var(--sf2);border-radius:4px;height:8px;overflow:hidden;}
+.bf{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold-l));transition:width .8s ease;}
+.bc2{font-size:.78rem;color:var(--gold-l);font-weight:700;min-width:25px;text-align:left;}
+.mig{display:grid;grid-template-columns:1fr 1fr;gap:.82rem;padding:1.1rem 1.3rem;}
+.mic{background:var(--sf);border:1px solid var(--br2);border-radius:10px;padding:.85rem;text-align:center;}
+.mv{font-size:1.5rem;font-weight:800;color:var(--gold-l);}
+.ml{font-size:.71rem;color:var(--tx2);margin-top:.18rem;}
+
+/* COMMS */
+.ctabs{display:flex;gap:.38rem;margin-bottom:1.25rem;flex-wrap:wrap;}
+.ctab{background:var(--sf);border:1px solid var(--br2);border-radius:20px;padding:.42rem .95rem;color:var(--tx2);font-family:'Tajawal',sans-serif;font-size:.82rem;cursor:pointer;transition:var(--tr);}
+.ctab.on{background:var(--gold-d);border-color:rgba(201,168,76,.28);color:var(--gold-l);font-weight:600;}
+.cp{display:none;}.cp.on{display:block;}
+.rmc{background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.13);border-radius:var(--r2);padding:.85rem 1.05rem;margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.62rem;}
+.rmn{font-weight:700;font-size:.88rem;margin-bottom:.13rem;}
+.rmm{font-size:.73rem;color:var(--tx2);}
+.wab{background:linear-gradient(135deg,#1a6b35,#22C55E);border:none;border-radius:8px;padding:.42rem .85rem;color:#fff;font-family:'Tajawal',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.3rem;}
+.waball{background:linear-gradient(135deg,#1a6b35,#22C55E);border:none;border-radius:10px;padding:.6rem 1.25rem;color:#fff;font-family:'Tajawal',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer;}
+.inac{background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.13);border-radius:var(--r2);padding:.82rem 1.05rem;margin-bottom:.45rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.62rem;}
+.tb3{background:var(--sf);border:1px solid var(--br2);border-radius:10px;padding:.85rem;margin-bottom:.6rem;}
+.tl{font-size:.76rem;color:var(--gold);font-weight:600;margin-bottom:.42rem;}
+.ta{width:100%;background:var(--sf2);border:1px solid var(--br2);border-radius:8px;padding:.68rem;color:var(--tx);font-family:'Tajawal',sans-serif;font-size:.84rem;outline:none;resize:vertical;line-height:1.62;}
+.ta:focus{border-color:var(--gold);}
+
+/* WA PHONE ROW */
+.wapr{display:flex;gap:0;margin-bottom:.85rem;}
+.wacc{background:var(--sf);border:1px solid var(--br2);border-radius:9px 0 0 9px;padding:.7rem .75rem;color:var(--tx);font-family:'Tajawal',sans-serif;font-size:.86rem;outline:none;width:auto;min-width:0;cursor:pointer;border-left:none;flex-shrink:0;}
+.wacc:focus{border-color:var(--gold);}
+.wapi{flex:1;background:var(--sf);border:1px solid var(--br2);border-radius:0 9px 9px 0;border-right:none;padding:.7rem .88rem;color:var(--tx);font-family:'Tajawal',sans-serif;font-size:.86rem;outline:none;}
+.wapi:focus{border-color:var(--gold);}
+
+/* FEEDBACK */
+.ftabs{display:flex;gap:.38rem;margin-bottom:1.15rem;}
+.ftab{background:var(--sf);border:1px solid var(--br2);border-radius:20px;padding:.42rem .95rem;color:var(--tx2);font-family:'Tajawal',sans-serif;font-size:.82rem;cursor:pointer;transition:var(--tr);}
+.ftab.on{background:var(--gold-d);border-color:rgba(201,168,76,.28);color:var(--gold-l);font-weight:600;}
+.fbc{background:var(--sf);border:1px solid var(--br2);border-radius:var(--r2);padding:.88rem 1.05rem;margin-bottom:.62rem;}
+.fbct{font-weight:700;font-size:.88rem;margin-bottom:.38rem;}
+.fbcm{font-size:.73rem;color:var(--tx2);margin-bottom:.4rem;}
+.fbcd{font-size:.82rem;color:var(--tx2);line-height:1.58;}
+.fbrb{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.14);border-radius:8px;padding:.58rem .82rem;font-size:.79rem;color:#4ade80;margin-top:.42rem;}
+.b-fe{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.18);}
+.b-bu{background:rgba(239,68,68,.08);color:var(--rd);border:1px solid rgba(239,68,68,.14);}
+.b-qu{background:rgba(96,165,250,.1);color:var(--bl);border:1px solid rgba(96,165,250,.18);}
+.b-nw{background:rgba(96,165,250,.1);color:var(--bl);border:1px solid rgba(96,165,250,.18);}
+.b-rv{background:rgba(245,158,11,.1);color:var(--or);border:1px solid rgba(245,158,11,.18);}
+.b-dn{background:rgba(34,197,94,.1);color:var(--gr);border:1px solid rgba(34,197,94,.18);}
+.b-rj{background:rgba(239,68,68,.08);color:var(--rd);border:1px solid rgba(239,68,68,.14);}
+.ffm .fl2{display:block;font-size:.78rem;color:var(--gold);margin-bottom:.28rem;font-weight:600;}
+.ffm .fi2{width:100%;background:var(--sf);border:1px solid var(--br2);border-radius:9px;padding:.68rem .88rem;color:var(--tx);font-family:'Tajawal',sans-serif;font-size:.86rem;outline:none;margin-bottom:.82rem;}
+.ffm .fi2:focus{border-color:var(--gold);}
+.ffm select.fi2{background:var(--bg3);}
+
+/* BLOCKED */
+.bli{display:flex;align-items:center;justify-content:space-between;padding:.58rem .82rem;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.1);border-radius:9px;margin-bottom:.38rem;}
+
+/* MODALS */
+.mb{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(5px);}
+.mb.on{display:flex;}
+.md{background:var(--bg3);border:1px solid var(--br);border-radius:20px;width:100%;max-width:500px;padding:2rem;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.7);}
+.mdw{max-width:560px;}
+.mdt{font-family:'Amiri',serif;font-size:1.22rem;color:var(--gold-l);margin-bottom:1.2rem;}
+.mds{color:var(--tx2);font-size:.82rem;margin-bottom:.62rem;}
+.mdl{display:block;font-size:.78rem;color:var(--gold);margin-bottom:.3rem;font-weight:600;}
+.mdi{width:100%;background:var(--sf);border:1px solid var(--br2);border-radius:9px;padding:.68rem .88rem;color:var(--tx);font-family:'Tajawal',sans-serif;font-size:.86rem;outline:none;margin-bottom:.82rem;}
+.mdi:focus{border-color:var(--gold);}
+.mds2{width:100%;background:var(--bg);border:1px solid var(--br2);border-radius:9px;padding:.68rem .88rem;color:var(--tx);font-family:'Tajawal',sans-serif;font-size:.86rem;outline:none;margin-bottom:.82rem;}
+.mds2:focus{border-color:var(--gold);}
+.mbt{display:flex;gap:.62rem;margin-top:.85rem;justify-content:flex-end;flex-wrap:wrap;}
+.mc2{background:transparent;border:1px solid var(--br2);border-radius:9px;padding:.6rem 1.18rem;color:var(--tx2);font-family:'Tajawal',sans-serif;font-size:.86rem;cursor:pointer;}
+.mok{background:linear-gradient(135deg,#B8922A,#E8C97A);border:none;border-radius:9px;padding:.6rem 1.5rem;color:#070714;font-family:'Tajawal',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer;}
+.mok:disabled{opacity:.5;cursor:not-allowed;}
+
+/* DRUG WARN */
+.dw{border-radius:8px;padding:.48rem .72rem;font-size:.79rem;margin-bottom:.72rem;margin-top:-.65rem;display:none;transition:all .28s;}
+
+/* SCRIBE */
+.sct{background:var(--sf);border:1px solid var(--br2);border-radius:10px;padding:.88rem .95rem;min-height:78px;font-size:.86rem;line-height:1.7;color:var(--tx2);margin-bottom:.95rem;}
+.scr{background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.13);border-radius:12px;padding:.95rem;margin-top:.95rem;font-size:.84rem;line-height:1.72;}
+.scrl{font-size:.73rem;color:var(--gr);font-weight:700;margin-bottom:.62rem;}
+
+/* TOAST + BANNER */
+.tst{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg3);border:1px solid var(--br);border-radius:12px;padding:.8rem 1.5rem;color:var(--gold-l);font-family:'Tajawal',sans-serif;font-size:.88rem;z-index:999;transition:transform .38s ease;box-shadow:var(--sh);pointer-events:none;}
+.tst.on{transform:translateX(-50%) translateY(0);}
+.ib2{display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.22);border-radius:10px;padding:.78rem 1.18rem;margin-bottom:1.35rem;color:var(--rd);font-size:.85rem;text-align:center;}
+
+/* RESPONSIVE */
+@media(max-width:820px){
+  :root{--sw:0px;}
+  .sb{transform:translateX(100%);width:260px;}
+  .sb.op{transform:translateX(0);}
+  .hb{display:flex;}
+  .mn{margin-right:0;padding:1rem;padding-top:3.8rem;}
+  .sg{grid-template-columns:1fr 1fr;}
+  .stg{grid-template-columns:1fr;}
+  .mc{display:block;}
+  .tw{display:none;}
+  .cw{grid-template-columns:repeat(7,1fr);}
+  .cc{min-height:85px;}
+  .mig{grid-template-columns:1fr;}
+  .pst{flex-direction:column;gap:.3rem;}
+  .hr{flex-direction:column;align-items:flex-start;}
+}
+</style></head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="lp" class="lp">
+  <div class="lc">
+    <div class="ll">🦷</div>
+    <div class="lt" id="lTitle">لوحة تحكم العيادة</div>
+    <div class="ls" id="lSub">أدخل كلمة المرور للدخول</div>
+    <div class="le" id="lErr">كلمة المرور غير صحيحة</div>
+    <label class="fl">كلمة المرور</label>
+    <input class="fi" type="password" id="lPass" placeholder="●●●●●●●●" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="pb" onclick="doLogin()">دخول ←</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="ap" class="ap">
+  <div class="hb" onclick="togSB()">☰</div>
+  <div class="ov" id="ov" onclick="clsSB()"></div>
+
+  <nav class="sb" id="sb">
+    <div class="sbh">
+      <div class="cb">
+        <div class="ci" id="sbIcon">🦷</div>
+        <div>
+          <div class="cn" id="sbName">العيادة</div>
+          <div class="cd" id="sbDr">الدكتور</div>
+        </div>
+      </div>
+    </div>
+    <div class="nv">
+      <div class="ng">الرئيسية</div>
+      <div class="ni ac" onclick="go('dash',this)"><span class="nic">🏠</span>الداشبورد</div>
+      <div class="ni" onclick="go('cal',this)"><span class="nic">📅</span>التقويم</div>
+      <div class="ng">إدارة المرضى</div>
+      <div class="ni" onclick="go('appts',this)"><span class="nic">📋</span>المواعيد</div>
+      <div class="ni" onclick="go('patients',this)"><span class="nic">👤</span>ملفات المرضى</div>
+      <div class="ni" onclick="go('rx',this)"><span class="nic">💊</span>الوصفات</div>
+      <div class="ng">تحليل وتواصل</div>
+      <div class="ni" onclick="go('stats',this)"><span class="nic">📊</span>الإحصائيات</div>
+      <div class="ni" onclick="go('comms',this)"><span class="nic">💬</span>التواصل</div>
+      <div class="ng">إعدادات</div>
+      <div class="ni" onclick="go('hours',this)"><span class="nic">🕐</span>ساعات الدوام</div>
+      <div class="ni" onclick="go('blocked',this)"><span class="nic">🚫</span>مسدودة</div>
+      <div class="ni" onclick="go('fb',this)"><span class="nic">💡</span>طلبات التطوير</div>
+      <div class="ni" onclick="go('settings',this)"><span class="nic">⚙️</span>الإعدادات</div>
+    </div>
+    <div class="aii" id="aiInd">🤖 AI غير مفعّل</div>
+    <div class="sbf">
+      <button class="tb" onclick="togTheme()" id="tBtn">🌙</button>
+      <button class="out" onclick="doLogout()">خروج ✕</button>
+    </div>
+  </nav>
+
+  <main class="mn">
+
+    <!-- DASH -->
+    <div class="sec on" id="s-dash">
+      <div class="ib2" id="inBan">⚠️ تم إيقاف العيادة. سيتم تسجيل الخروج...</div>
+      <div class="tb2">
+        <div>
+          <div class="pt" id="dTitle">مرحباً 👋</div>
+          <div class="pt2" id="dDate"></div>
+        </div>
+        <div class="tr">
+          <div class="lv"><div class="ld"></div><span id="lupd">يتحدث...</span></div>
+          <button class="ab" onclick="openAddAppt()">+ موعد جديد</button>
+        </div>
+      </div>
+      <div class="sg">
+        <div class="sc s1" onclick="gotoF('all')" title="عرض كل المواعيد"><span class="sc-ic">📋</span><div class="sc-v" id="sT">0</div><div class="sc-l">إجمالي الحجوزات</div><div class="sc-hint">اضغط للعرض</div></div>
+        <div class="sc s2" onclick="gotoF('pending')" title="عرض المنتظرة"><span class="sc-ic">⏳</span><div class="sc-v" id="sP">0</div><div class="sc-l">قيد الانتظار</div><div class="sc-hint">اضغط للعرض</div></div>
+        <div class="sc s3" onclick="gotoF('confirmed')" title="عرض المؤكدة"><span class="sc-ic">✅</span><div class="sc-v" id="sC">0</div><div class="sc-l">مواعيد مؤكدة</div><div class="sc-hint">اضغط للعرض</div></div>
+        <div class="sc s4" onclick="gotoF('completed')" title="إيرادات"><span class="sc-ic">💰</span><div class="sc-v" id="sR">—</div><div class="sc-l">إيرادات اليوم</div><div class="sc-hint">اضغط للعرض</div></div>
+      </div>
+      <div class="brf" id="brfCard" style="display:none">
+        <div class="brfh">
+          <div class="brfi">🧠</div>
+          <div><div class="brft">موجز الذكاء الاصطناعي</div></div>
+          <div class="brfti" id="brfTime"></div>
+          <button class="brfr" onclick="loadBrf()">↻ تحديث</button>
+        </div>
+        <div class="brfb" id="brfBody"><div class="ald"><span class="ad"></span><span class="ad"></span><span class="ad"></span><span style="margin-right:.3rem">جاري التحضير...</span></div></div>
+      </div>
+      <div class="cd2">
+        <div class="cdh"><div class="cdt">🕐 آخر الحجوزات</div><div class="cda"><button class="ib" onclick="loadAppts()">↻ تحديث</button></div></div>
+        <div class="tw"><table><thead><tr><th>المريض</th><th>الخدمة</th><th>الموعد</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="rBody"></tbody></table></div>
+        <div class="mc" id="rCards"></div>
+      </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="sec" id="s-cal">
+      <div class="tb2"><div class="pt">📅 التقويم الأسبوعي</div><button class="ab" onclick="openAddAppt()">+ موعد جديد</button></div>
+      <div class="cd2">
+        <div class="cnv">
+          <button class="cb2" onclick="chW(-1)">→ السابق</button>
+          <div style="font-family:'Amiri',serif;font-size:.98rem;color:var(--gold-l)" id="calLbl"></div>
+          <button class="cb2" onclick="chW(1)">التالي ←</button>
+        </div>
+        <div class="cw" id="calH"></div>
+        <div class="cw" id="calB"></div>
+      </div>
+    </div>
+
+    <!-- APPOINTMENTS -->
+    <div class="sec" id="s-appts">
+      <div class="tb2"><div class="pt">📋 إدارة المواعيد</div><button class="ab" onclick="openAddAppt()">+ موعد جديد</button></div>
+      <div class="cd2">
+        <div class="frow">
+          <button class="fc on" onclick="setF('all',this)">الكل</button>
+          <button class="fc" onclick="setF('pending',this)">⏳ انتظار</button>
+          <button class="fc" onclick="setF('confirmed',this)">✅ مؤكد</button>
+          <button class="fc" onclick="setF('completed',this)">🏁 مكتمل</button>
+          <button class="fc" onclick="setF('cancelled',this)">❌ ملغي</button>
+          <input class="si" id="srch" type="text" placeholder="🔍 بحث..." oninput="renderT()"/>
+          <button class="ib" onclick="loadAppts()">↻</button>
+        </div>
+        <div class="tw"><table><thead><tr><th>المريض</th><th>الخدمة</th><th>التاريخ</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="aBody"></tbody></table></div>
+        <div class="mc" id="aCards"></div>
+      </div>
+    </div>
+
+    <!-- PATIENTS -->
+    <div class="sec" id="s-patients">
+      <div class="tb2"><div class="pt">👤 ملفات المرضى</div></div>
+      <div class="cd2" style="padding:1.3rem">
+        <div class="psr">
+          <input class="psi" id="pSrch" type="tel" placeholder="🔍 ابحث برقم الهاتف..." dir="ltr" onkeydown="if(event.key==='Enter')srchPat()"/>
+          <button class="psb" onclick="srchPat()">بحث</button>
+        </div>
+        <div id="pResult"></div>
+      </div>
+    </div>
+
+    <!-- PRESCRIPTIONS -->
+    <div class="sec" id="s-rx">
+      <div class="tb2"><div class="pt">💊 الوصفات الطبية</div><button class="arb" onclick="openRx()">+ إضافة وصفة</button></div>
+      <div class="cd2">
+        <div class="frow"><input class="si" id="rxSrch" type="text" placeholder="🔍 بحث..." oninput="renderRx()" style="margin-right:0"/><button class="ib" onclick="loadRx()">↻</button></div>
+        <div id="rxCont"><div class="em"><div class="sp"></div></div></div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="sec" id="s-stats">
+      <div class="tb2"><div class="pt">📊 الإحصائيات</div><button class="ib" onclick="renderStats()">↻ تحديث</button></div>
+      <div class="cd2">
+        <div class="cdh"><div class="cdt">🦷 أكثر الخدمات طلباً</div></div>
+        <div style="padding:1.05rem 1.3rem" id="sBars"><div class="em"><div class="ei">📊</div>لا توجد بيانات</div></div>
+      </div>
+      <div class="cd2">
+        <div class="cdh"><div class="cdt">📈 ملخص النشاط</div></div>
+        <div class="mig" id="sAct"></div>
+      </div>
+    </div>
+
+    <!-- COMMS -->
+    <div class="sec" id="s-comms">
+      <div class="tb2"><div class="pt">💬 التواصل والتذكيرات</div></div>
+      <div class="ctabs">
+        <button class="ctab on" onclick="swCT('tm',this)">📅 مواعيد غداً</button>
+        <button class="ctab" onclick="swCT('in',this)">⏰ غائبون</button>
+        <button class="ctab" onclick="swCT('tp',this)">✏️ القوالب</button>
+      </div>
+      <div class="cp on" id="cp-tm">
+        <div class="cd2" style="padding:1.3rem">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.65rem">
+            <div><div class="cdt" id="tmTitle">⏳ جاري...</div><div style="font-size:.78rem;color:var(--tx2);margin-top:.18rem" id="tmSub"></div></div>
+            <button class="waball" onclick="sendAll()" id="sendAllBtn" style="display:none">💬 بعت للكل</button>
+          </div>
+          <div id="tmList"></div>
+        </div>
+      </div>
+      <div class="cp" id="cp-in">
+        <div class="cd2" style="padding:1.3rem">
+          <div class="cdt" style="margin-bottom:.45rem">⏰ مرضى لم يزوروا من 60+ يوم</div>
+          <p style="color:var(--tx2);font-size:.82rem;margin-bottom:1rem">ذكّرهم بزيارة دورية 😊</p>
+          <div id="inList"></div>
+        </div>
+      </div>
+      <div class="cp" id="cp-tp">
+        <div class="stb">
+          <div class="stbt">✏️ قوالب الرسائل</div>
+          <p style="color:var(--tx2);font-size:.8rem;margin-bottom:.9rem;line-height:1.6">المتغيرات: <code style="background:var(--sf);padding:.08rem .38rem;border-radius:4px">{name}</code> <code style="background:var(--sf);padding:.08rem .38rem;border-radius:4px">{clinic}</code> <code style="background:var(--sf);padding:.08rem .38rem;border-radius:4px">{day}</code> <code style="background:var(--sf);padding:.08rem .38rem;border-radius:4px">{time}</code></p>
+          <div class="tb3"><div class="tl">📅 تذكير موعد</div><textarea class="ta" id="tRem" rows="3">السلام عليكم {name} 😊 نذكرك بموعدك في {clinic} غداً {day} الساعة {time} 🦷</textarea></div>
+          <div class="tb3"><div class="tl">✅ تأكيد موعد</div><textarea class="ta" id="tCon" rows="2">السلام عليكم {name} 😊 تم تأكيد موعدك في {clinic} يوم {day} الساعة {time} ✅</textarea></div>
+          <div class="tb3"><div class="tl">🔄 فحص دوري</div><textarea class="ta" id="tFol" rows="2">السلام عليكم {name} 😊 مضى وقت على زيارتك لـ {clinic} 🦷 نتطلع لرؤيتك!</textarea></div>
+          <button class="sb2" onclick="saveTmpls()">💾 حفظ القوالب</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOURS -->
+    <div class="sec" id="s-hours">
+      <div class="tb2"><div class="pt">🕐 ساعات الدوام</div></div>
+      <div class="stb"><div class="stbt">📅 حدد أيام وساعات العمل</div><p style="color:var(--tx2);font-size:.81rem;margin-bottom:1rem;line-height:1.6">الأيام المغلقة لن تظهر للمرضى عند الحجز</p><div id="hGrid"></div><button class="sb2" onclick="saveHrs()" style="margin-top:.95rem">💾 حفظ</button></div>
+    </div>
+
+    <!-- BLOCKED -->
+    <div class="sec" id="s-blocked">
+      <div class="tb2"><div class="pt">🚫 أوقات مسدودة</div></div>
+      <div class="cd2" style="padding:1.3rem">
+        <div class="stb" style="margin-bottom:1.2rem">
+          <div class="stbt">إضافة يوم مسدود</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem">
+            <div class="fr"><label class="fs">التاريخ</label><input class="fc2" type="date" id="blkD"/></div>
+            <div class="fr"><label class="fs">السبب</label><input class="fc2" type="text" id="blkR" placeholder="إجازة، مؤتمر..."/></div>
+          </div>
+          <button class="sb2" onclick="addBlk()">+ إضافة</button>
+        </div>
+        <div id="blkList"></div>
+      </div>
+    </div>
+
+    <!-- FEEDBACK -->
+    <div class="sec" id="s-fb">
+      <div class="tb2"><div class="pt">💡 طلبات التطوير</div></div>
+      <div class="ftabs">
+        <button class="ftab on" id="fbt1" onclick="swFT('new',this)">+ طلب جديد</button>
+        <button class="ftab" id="fbt2" onclick="swFT('mine',this)">طلباتي 📋</button>
+      </div>
+      <div id="fbNew" class="stb ffm">
+        <div class="stbt">📝 إرسال طلب جديد</div>
+        <label class="fl2">نوع الطلب</label><select class="fi2" id="fbType"><option value="feature">✨ ميزة جديدة</option><option value="bug">🐛 مشكلة</option><option value="question">❓ استفسار</option></select>
+        <label class="fl2">الأولوية</label><select class="fi2" id="fbPri"><option value="low">🟢 منخفضة</option><option value="medium" selected>🟡 متوسطة</option><option value="high">🔴 عالية</option></select>
+        <label class="fl2">العنوان *</label><input class="fi2" id="fbTit" type="text" placeholder="اكتب عنوان الطلب"/>
+        <label class="fl2">الوصف *</label><textarea class="fi2" id="fbDes" rows="4" placeholder="اشرح الطلب..." style="resize:vertical"></textarea>
+        <button class="sb2" id="fbBtn" onclick="subFb()">📤 إرسال الطلب</button>
+      </div>
+      <div id="fbMine" style="display:none"><div id="fbMineL"></div></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="sec" id="s-settings">
+      <div class="tb2"><div class="pt">⚙️ إعدادات العيادة</div></div>
+      <div class="stg">
+        <div class="stb">
+          <div class="stbt">📋 معلومات العيادة</div>
+          <div class="fr"><label class="fs">اسم العيادة</label><input class="fc2" id="sN" type="text"/></div>
+          <div class="fr"><label class="fs">اسم الدكتور</label><input class="fc2" id="sD" type="text"/></div>
+          <div class="fr"><label class="fs">التخصص</label><input class="fc2" id="sS" type="text"/></div>
+          <div class="fr"><label class="fs">رقم واتساب</label><input class="fc2" id="sW" type="text" dir="ltr"/></div>
+          <div class="fr"><label class="fs">العنوان</label><input class="fc2" id="sA" type="text"/></div>
+          <div class="fr"><label class="fs">رابط الشعار</label><input class="fc2" id="sLo" type="url" placeholder="https://..." dir="ltr" oninput="prvLogo()"/></div>
+          <div id="logoPrv" style="display:none;margin:.45rem 0;text-align:center"><img id="logoI" src="" alt="" style="max-height:58px;max-width:155px;object-fit:contain;border-radius:8px"/></div>
+          <div class="fr"><label class="fs">اللون الرئيسي</label><input class="fc2" id="sCl" type="color" style="height:40px;cursor:pointer"/></div>
+          <button class="sb2" onclick="saveCI()">💾 حفظ</button>
+        </div>
+        <div class="stb">
+          <div class="stbt">🦷 الخدمات والأسعار</div>
+          <p style="color:var(--tx2);font-size:.78rem;margin-bottom:.7rem">أضف سعر لكل خدمة لتتبع الإيرادات 💰</p>
+          <div id="svcL"></div>
+          <div class="sar">
+            <input class="sai" id="nSI" type="text" placeholder="🦷" maxlength="2" style="width:44px;text-align:center;flex:none"/>
+            <input class="sai" id="nSN" type="text" placeholder="اسم الخدمة"/>
+            <input class="sai" id="nSP" type="number" placeholder="السعر ₪" style="width:88px" min="0"/>
+            <button class="sab" onclick="addSvc()">+ إضافة</button>
+          </div>
+        </div>
+        <div class="stb">
+          <div class="stbt">🔐 تغيير كلمة المرور</div>
+          <div class="fr"><label class="fs">كلمة المرور الجديدة</label><input class="fc2" id="nP" type="password"/></div>
+          <div class="fr"><label class="fs">تأكيد</label><input class="fc2" id="cP" type="password"/></div>
+          <button class="sb2" onclick="chgPass()">🔐 تغيير</button>
+        </div>
+        <div class="stb">
+          <div class="stbt">🔗 رابط الحجز</div>
+          <div style="background:var(--sf);border:1px solid var(--br2);border-radius:9px;padding:.8rem .95rem;font-size:.82rem;direction:ltr;text-align:left;word-break:break-all;margin-bottom:.7rem;" id="bLink"></div>
+          <button class="sb2" onclick="cpyLink()">📋 نسخ الرابط</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ADD APPT MODAL -->
+<div id="mAddAppt" class="mb">
+  <div class="md">
+    <div class="mdt">📅 إضافة موعد جديد</div>
+    <label class="mdl">اسم المريض *</label><input class="mdi" id="maN" type="text"/>
+    <label class="mdl">رقم الهاتف *</label>
+    <div class="wapr" style="margin-bottom:.82rem">
+      <select class="wacc" id="maCC" style="border-radius:9px 0 0 9px"><option value="970">🇵🇸 +970</option><option value="972">🇮🇱 +972</option></select>
+      <input class="wapi" id="maP" type="tel" placeholder="5x-xxx-xxxx" style="border-radius:0 9px 9px 0"/>
+    </div>
+    <label class="mdl">الخدمة *</label><select class="mds2" id="maS"></select>
+    <label class="mdl">التاريخ *</label><input class="mdi" id="maD" type="date"/>
+    <label class="mdl">الوقت *</label><input class="mdi" id="maT" type="time"/>
+    <label class="mdl">ملاحظات</label><textarea class="mdi" id="maNt" rows="2" style="resize:none"></textarea>
+    <div class="mbt">
+      <button class="mc2" onclick="clsM('mAddAppt')">إلغاء</button>
+      <button class="mok" id="mAddOk" onclick="saveAppt()">✅ حفظ الموعد</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTES MODAL -->
+<div id="mNotes" class="mb">
+  <div class="md">
+    <div class="mdt">📝 ملاحظات الدكتور</div>
+    <p class="mds" id="nPat"></p>
+    <label class="mdl">الملاحظة</label>
+    <textarea class="mdi" id="nTxt" rows="4" placeholder="أضف ملاحظاتك..." style="resize:vertical"></textarea>
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
+      <input type="checkbox" id="nVis" checked style="width:16px;height:16px;cursor:pointer;accent-color:var(--gold)"/>
+      <label for="nVis" style="font-size:.8rem;color:var(--tx2);cursor:pointer">مرئية للمريض</label>
+    </div>
+    <div class="mbt">
+      <button class="mc2" onclick="clsM('mNotes')">إلغاء</button>
+      <button class="mok" onclick="saveNotes()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- RX MODAL -->
+<div id="mRx" class="mb">
+  <div class="md">
+    <div class="mdt">💊 إضافة وصفة طبية</div>
+    <label class="mdl">رقم هاتف المريض</label>
+    <div class="wapr" style="margin-bottom:.82rem">
+      <select class="wacc" id="rxCC" style="border-radius:9px 0 0 9px"><option value="970">🇵🇸 +970</option><option value="972">🇮🇱 +972</option></select>
+      <input class="wapi" id="rxPh" type="tel" placeholder="5x-xxx-xxxx" style="border-radius:0 9px 9px 0" oninput="afPat()"/>
+    </div>
+    <label class="mdl">اسم المريض</label><input class="mdi" id="rxPn" type="text"/>
+    <label class="mdl">موعد مرتبط</label><select class="mds2" id="rxAp"><option value="">— بدون ربط —</option></select>
+    <label class="mdl">اسم الدواء *</label>
+    <input class="mdi" id="rxMd" type="text" placeholder="أموكسيسيلين..." oninput="chkDrug(this.value)"/>
+    <div id="dWarn" class="dw"></div>
+    <label class="mdl">الجرعة</label><input class="mdi" id="rxDs" type="text" placeholder="500 مغ - 3 مرات يومياً"/>
+    <label class="mdl">مدة العلاج</label><input class="mdi" id="rxDr" type="text" placeholder="7 أيام"/>
+    <label class="mdl">تعليمات</label><input class="mdi" id="rxIn" type="text" placeholder="بعد الأكل..."/>
+    <div class="mbt">
+      <button class="mc2" onclick="clsM('mRx')">إلغاء</button>
+      <button class="mok" id="rxOk" onclick="saveRx()">💊 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIBE MODAL -->
+<div id="mScribe" class="mb">
+  <div class="md mdw">
+    <div class="mdt">🎙️ السجل الطبي الصوتي</div>
+    <p class="mds">المريض: <strong style="color:var(--gold-l)" id="scPat"></strong></p>
+    <p style="color:var(--tx2);font-size:.82rem;margin-bottom:.95rem;line-height:1.6">تحدث مع مريضك بشكل طبيعي — Claude يحلل ويملأ الملف تلقائياً 🧠</p>
+    <button id="scBtn" onclick="togScr()" style="width:100%;border:none;border-radius:12px;padding:.88rem;color:#fff;font-family:'Tajawal',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;margin-bottom:.95rem;background:linear-gradient(135deg,var(--rd),#ff7070);transition:var(--tr)">🎙️ ابدأ التسجيل</button>
+    <div id="scTxt" class="sct">سيظهر النص هنا أثناء التحدث...</div>
+    <button id="scAnal" onclick="analScr()" style="display:none;width:100%;background:linear-gradient(135deg,#7c3aed,var(--pu));border:none;border-radius:12px;padding:.82rem;color:#fff;font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;margin-bottom:.45rem">🧠 تحليل بالذكاء الاصطناعي</button>
+    <div id="scRes"></div>
+    <div class="mbt"><button class="mc2" onclick="clsM('mScribe')">إغلاق</button></div>
+  </div>
+</div>
+
+<div class="tst" id="toast"></div>
+
+<script>
+const SB='https://mcyymirzzefhhutiofsw.supabase.co';
+const AK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jeXltaXJ6emVmaGh1dGlvZnN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjQxMTAsImV4cCI6MjA5NDg0MDExMH0.82-EY5XTdCEcLbuRi_6gbjpeq1IEqAP-wm-OxV-OSLc';
+const H={'apikey':AK,'Authorization':'Bearer '+AK,'Content-Type':'application/json'};
+const DNS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const DSH=['أح','اث','ثل','أر','خم','جم','سب'];
+const DS=[{n:'الأحد',k:'sun'},{n:'الاثنين',k:'mon'},{n:'الثلاثاء',k:'tue'},{n:'الأربعاء',k:'wed'},{n:'الخميس',k:'thu'},{n:'الجمعة',k:'fri'},{n:'السبت',k:'sat'}];
+let clinic=null,appts=[],rxAll=[],svcs=[],hrs=[],curF='all',nId=null,sk='',CK='',calWk=null;
+const esc=s=>{const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;};
+const slug=()=>location.pathname.split('/').filter(x=>x)[0]||null;
+const api=async(p,o={})=>{try{const r=await fetch(SB+p,{headers:H,...o});return r.ok?(r.status===204?null:r.json()):null;}catch{return null;}};
+const toast=m=>{const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),3000);};
+const opM=id=>document.getElementById(id).classList.add('on');
+const clsM=id=>document.getElementById(id).classList.remove('on');
+const fmtD=d=>d?new Date(d).toLocaleDateString('ar-EG',{day:'2-digit',month:'2-digit',year:'numeric'}):'—';
+const ds=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const bdg=s=>{const m={pending:'bp ⏳ انتظار',confirmed:'bc ✅ مؤكد',completed:'bco 🏁 مكتمل',cancelled:'bca ❌ ملغي'};const[c,...r]=(m[s]||'bp ⏳').split(' ');return `<span class="bg ${c}">${r.join(' ')}</span>`;};
+const togSB=()=>{document.getElementById('sb').classList.toggle('op');document.getElementById('ov').classList.toggle('on');};
+const clsSB=()=>{document.getElementById('sb').classList.remove('op');document.getElementById('ov').classList.remove('on');};
+const getCC=id=>(document.getElementById(id)?.value||'970');
+const fullPhone=(cc,ph)=>cc+ph.replace(/\D/g,'');
+
+/* THEME */
+function togTheme(){const l=document.body.classList.toggle('lm');document.getElementById('tBtn').textContent=l?'☀️':'🌙';localStorage.setItem('theme',l?'lm':'');}
+function applyTheme(){if(localStorage.getItem('theme')==='lm'){document.body.classList.add('lm');document.getElementById('tBtn').textContent='☀️';}}
+
+/* SESSION */
+async function init(){
+  applyTheme();
+  const s=slug();if(!s){document.getElementById('lTitle').textContent='خطأ';return;}
+  sk='dnl_'+s;
+  try{const sv=JSON.parse(localStorage.getItem(sk)||'null');if(sv&&sv.c&&Date.now()-sv.a<86400000){clinic=sv.c;showApp();return;}}catch(e){}
+  const d=await api('/rest/v1/clinics?slug=eq.'+s+'&select=*');
+  if(!d||!d[0]){document.getElementById('lTitle').textContent='العيادة غير موجودة';return;}
+  clinic=d[0];document.getElementById('lTitle').textContent='لوحة تحكم - '+clinic.name;document.getElementById('lSub').textContent=clinic.doctor_name;
+}
+async function doLogin(){
+  const p=document.getElementById('lPass').value;
+  if(!clinic){const s=slug();const d=await api('/rest/v1/clinics?slug=eq.'+s+'&select=*');if(d&&d[0])clinic=d[0];}
+  if(clinic&&p===clinic.admin_password){localStorage.setItem(sk,JSON.stringify({c:clinic,a:Date.now()}));showApp();}
+  else{document.getElementById('lErr').classList.add('on');document.getElementById('lPass').value='';}
+}
+function doLogout(){localStorage.removeItem(sk);location.reload();}
+function showApp(){
+  document.getElementById('lp').style.display='none';
+  document.getElementById('ap').style.display='block';
+  document.getElementById('sbName').textContent=clinic.name;
+  document.getElementById('sbDr').textContent=clinic.doctor_name;
+  document.getElementById('bLink').textContent=location.origin+'/'+clinic.slug;
+  document.getElementById('dDate').textContent=new Date().toLocaleDateString('ar-EG',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  calWk=getMon(new Date());
+  loadSettings();loadSvcs();loadHrs();loadBlocked();loadRx();loadTmpls();
+  loadCK().then(()=>loadAppts());
+  stRfsh();
+}
+
+/* NAV */
+function go(sec,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('ac'));
+  document.getElementById('s-'+sec).classList.add('on');el.classList.add('ac');clsSB();
+  if(sec==='cal')renCal();
+  if(sec==='stats')renderStats();
+  if(sec==='fb')loadMyFb();
+  if(sec==='comms')renTm();
+}
+function gotoF(f){
+  const nav=document.querySelector('[onclick*="appts"]');if(nav)go('appts',nav);
+  setTimeout(()=>{curF=f;document.querySelectorAll('.fc').forEach(b=>b.classList.remove('on'));document.querySelectorAll('.fc').forEach(b=>{if(b.onclick&&b.onclick.toString().includes("'"+f+"'"))b.classList.add('on');});renderT();},60);
+}
+function openPat(phone){
+  const nav=document.querySelector('[onclick*="patients"]');if(nav)go('patients',nav);
+  setTimeout(()=>{document.getElementById('pSrch').value=phone;srchPat();},60);
+}
+
+/* REFRESH */
+let rfT=null;
+function stRfsh(){if(rfT)clearInterval(rfT);rfT=setInterval(async()=>{loadAppts();await chkStatus();},60000);updT();}
+function updT(){document.getElementById('lupd').textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});}
+async function chkStatus(){
+  const d=await api('/rest/v1/clinics?id=eq.'+clinic.id+'&select=is_active,subscription_ends_at,trial_ends_at');
+  if(!d||!d[0])return;
+  const c=d[0];if(!c.is_active||new Date(c.subscription_ends_at||c.trial_ends_at)<new Date()){
+    document.getElementById('inBan').style.display='block';
+    setTimeout(()=>{localStorage.removeItem(sk);location.reload();},3000);
+  }
+}
+
+/* CLAUDE */
+async function loadCK(){
+  const d=await api('/rest/v1/system_settings?key=eq.anthropic_api_key&select=value');
+  if(d&&d[0]&&d[0].value){CK=d[0].value;document.getElementById('aiInd').textContent='🤖 Claude AI مفعّل ✅';document.getElementById('brfCard').style.display='block';}
+}
+async function callClaude(prompt,json=false){
+  if(!CK)return json?null:'';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':CK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const data=await r.json();const text=data.content?.[0]?.text||'';
+    if(json){try{return JSON.parse(text.replace(/```json|```/g,'').trim());}catch{return null;}}
+    return text;
+  }catch(e){return json?null:'';}
+}
+async function loadBrf(){
+  if(!CK)return;
+  const el=document.getElementById('brfBody');const ti=document.getElementById('brfTime');
+  el.innerHTML='<div class="ald"><span class="ad"></span><span class="ad"></span><span class="ad"></span><span style="margin-right:.3rem">Claude يحضّر موجزك الصباحي...</span></div>';
+  const now=new Date();ti.textContent=now.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
+  const today=ds(now),wAgo=new Date(now-7*24*3600000);
+  const todayA=appts.filter(a=>a.appointment_date===today||new Date(a.created_at).toDateString()===now.toDateString());
+  const wkNew=appts.filter(a=>new Date(a.created_at)>wAgo).length;
+  const pend=appts.filter(a=>a.status==='pending').length,conf=appts.filter(a=>a.status==='confirmed').length,canc=appts.filter(a=>a.status==='cancelled').length;
+  const uniq=new Set(appts.map(a=>a.patient_phone)).size;
+  let rev=0;appts.filter(a=>a.status==='completed'&&(a.appointment_date===today||new Date(a.created_at).toDateString()===now.toDateString())).forEach(a=>{const s=svcs.find(sv=>sv.name===a.service);if(s&&s.price)rev+=parseFloat(s.price);});
+  const p=`أنت مساعد ذكي لطبيب أسنان. الآن ${now.toLocaleDateString('ar')} الساعة ${now.toLocaleTimeString('ar',{hour:'2-digit',minute:'2-digit'})}. الإحصائيات:
+مواعيد اليوم: ${todayA.length} | انتظار: ${pend} | مؤكدة: ${conf} | ملغية: ${canc} | جديدة هذا الأسبوع: ${wkNew} | إجمالي المرضى: ${uniq} | إيرادات اليوم: ${rev}₪
+اكتب موجزاً صباحياً للدكتور ${clinic.doctor_name} بأسلوب ودي ومحفز باللهجة العربية البسيطة، 3-4 جمل. أبرز المعلومات المهمة وقدم نصيحة إيجابية لليوم.`;
+  const res=await callClaude(p);
+  el.innerHTML=res?`<div>${esc(res).replace(/\n/g,'<br>')}</div>`:'<div style="color:var(--tx2)">فشل التحميل — تحقق من مفتاح Claude.</div>';
+}
+
+/* APPOINTMENTS */
+async function loadAppts(){
+  const d=await api('/rest/v1/appointments?clinic_id=eq.'+clinic.id+'&select=*&order=created_at.desc');
+  appts=d||[];updStats();renderT();renRecent();renCal();updT();
+  if(CK&&document.getElementById('brfCard').style.display!=='none')setTimeout(loadBrf,600);
+}
+function updStats(){
+  const today=ds(new Date());
+  document.getElementById('sT').textContent=appts.length;
+  document.getElementById('sP').textContent=appts.filter(a=>a.status==='pending').length;
+  document.getElementById('sC').textContent=appts.filter(a=>a.status==='confirmed').length;
+  let rev=0;appts.filter(a=>a.status==='completed'&&(a.appointment_date===today||new Date(a.created_at).toDateString()===new Date().toDateString())).forEach(a=>{const s=svcs.find(sv=>sv.name===a.service);if(s&&s.price)rev+=parseFloat(s.price);});
+  document.getElementById('sR').textContent=rev>0?rev+'₪':'—';
+}
+
+/* ACTION DROPDOWN */
+document.addEventListener('click',()=>document.querySelectorAll('.adp.on').forEach(d=>d.classList.remove('on')));
+function togAct(btn,e){
+  e.stopPropagation();
+  const dp=btn.nextElementSibling;const isOn=dp.classList.contains('on');
+  document.querySelectorAll('.adp.on').forEach(d=>{d.classList.remove('on');d.style.top='';d.style.right='';});
+  if(!isOn){
+    const rect=btn.getBoundingClientRect();const sp=window.innerHeight-rect.bottom;
+    dp.classList.add('on');dp.style.position='fixed';
+    if(sp<260){dp.style.bottom=(window.innerHeight-rect.top+4)+'px';dp.style.top='auto';}
+    else{dp.style.top=(rect.bottom+4)+'px';dp.style.bottom='auto';}
+    dp.style.right=(window.innerWidth-rect.right)+'px';dp.style.left='auto';
+  }
+}
+function actHTML(a){
+  const id=a.id,nm=esc(a.patient_name),ph=esc(a.patient_phone),day=esc(a.preferred_day||''),tm=esc(a.appointment_time||a.preferred_time||''),nt=esc(a.doctor_notes||''),vis=a.notes_visible!==false?'1':'0';
+  let it='';
+  if(a.status==='pending')it+=`<div class="ai a-gr" onclick="updA('${id}','confirmed')"><span class="ai-ic">✅</span>تأكيد الموعد</div>`;
+  if(a.status!=='completed'&&a.status!=='cancelled')it+=`<div class="ai a-bl" onclick="updA('${id}','completed')"><span class="ai-ic">🏁</span>تم المعاينة</div>`;
+  if(a.status!=='cancelled')it+=`<div class="ai a-or" onclick="updA('${id}','cancelled')"><span class="ai-ic">❌</span>إلغاء الموعد</div>`;
+  it+=`<div class="a-div"></div>`;
+  it+=`<div class="ai a-gd" onclick="opNotes('${id}','${nm}','${nt}','${vis}')"><span class="ai-ic">📝</span>ملاحظات الدكتور</div>`;
+  it+=`<div class="ai a-bl" onclick="opRxFor('${ph}','${nm}','${id}')"><span class="ai-ic">💊</span>إضافة وصفة</div>`;
+  it+=`<div class="ai a-pu" onclick="opScr('${id}','${nm}')"><span class="ai-ic">🎙️</span>سجل طبي صوتي</div>`;
+  it+=`<div class="ai" onclick="sendWA('${ph}','${nm}','${day}','${tm}')"><span class="ai-ic">💬</span>إرسال واتساب</div>`;
+  it+=`<div class="ai a-gd" onclick="openPat('${ph}')"><span class="ai-ic">👤</span>ملف المريض</div>`;
+  it+=`<div class="a-div"></div>`;
+  it+=`<div class="ai a-rd" onclick="delA('${id}')"><span class="ai-ic">🗑️</span>حذف الموعد</div>`;
+  return `<div class="aw"><button class="at" onclick="togAct(this,event)">⚡ إجراء ▾</button><div class="adp">${it}</div></div>`;
+}
+function renRecent(){
+  const d=appts.slice(0,6);
+  document.getElementById('rBody').innerHTML=d.length?d.map(a=>`<tr><td><div class="tn" onclick="openPat('${esc(a.patient_phone)}')">${esc(a.patient_name)}</div><div class="ts">${esc(a.patient_phone)}</div></td><td class="tsv">${esc(a.service)}</td><td><div>${esc(a.appointment_date||a.preferred_day||'—')}</div><div class="ts">${esc(a.appointment_time||a.preferred_time||'')}</div></td><td>${bdg(a.status)}</td><td>${actHTML(a)}</td></tr>`).join(''):`<tr><td colspan="5"><div class="em"><div class="ei">📭</div>لا توجد حجوزات</div></td></tr>`;
+  document.getElementById('rCards').innerHTML=d.map(a=>mCd(a)).join('');
+}
+function setF(f,btn){curF=f;document.querySelectorAll('.fc').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderT();}
+function renderT(){
+  const s=(document.getElementById('srch')||{value:''}).value.trim().toLowerCase();
+  let d=curF==='all'?appts:appts.filter(a=>a.status===curF);
+  if(s)d=d.filter(a=>(a.patient_name||'').toLowerCase().includes(s)||(a.patient_phone||'').includes(s));
+  document.getElementById('aBody').innerHTML=d.length?d.map(a=>`<tr><td><div class="tn" onclick="openPat('${esc(a.patient_phone)}')">${esc(a.patient_name)}</div><div class="ts">${esc(a.patient_phone)}</div></td><td class="tsv">${esc(a.service)}</td><td><div>${esc(a.appointment_date||a.preferred_day||'—')}</div><div class="ts">${esc(a.appointment_time||a.preferred_time||'')}</div></td><td>${bdg(a.status)}</td><td>${actHTML(a)}</td></tr>`).join(''):`<tr><td colspan="5"><div class="em"><div class="ei">📭</div>لا توجد نتائج</div></td></tr>`;
+  document.getElementById('aCards').innerHTML=d.map(a=>mCd(a)).join('');
+}
+function mCd(a){return `<div class="mca"><div class="mt"><div><div class="mn2" onclick="openPat('${esc(a.patient_phone)}')">${esc(a.patient_name)}</div><div class="mp">${esc(a.patient_phone)}</div></div>${bdg(a.status)}</div><div class="msv">🦷 ${esc(a.service)}</div><div class="mm">📅 ${esc(a.appointment_date||a.preferred_day||'—')} ${esc(a.appointment_time||a.preferred_time||'')}</div>${actHTML(a)}</div>`;}
+async function updA(id,status){
+  await api('/rest/v1/appointments?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status})});
+  appts=appts.map(a=>a.id==id?{...a,status}:a);
+  updStats();renderT();renRecent();renCal();
+  toast({confirmed:'✅ تم التأكيد',completed:'🏁 اكتمل الموعد',cancelled:'❌ تم الإلغاء'}[status]||'تم');
+}
+async function delA(id){
+  if(!confirm('حذف هذا الحجز؟'))return;
+  await api('/rest/v1/appointments?id=eq.'+id,{method:'DELETE'});
+  appts=appts.filter(a=>a.id!=id);updStats();renderT();renRecent();renCal();toast('🗑 تم الحذف');
+}
+function sendWA(phone,name,day,time){
+  const tmpl=document.getElementById('tRem')?.value||'';
+  const msg=tmpl?tmpl.replace(/{name}/g,name).replace(/{clinic}/g,clinic.name).replace(/{day}/g,day).replace(/{time}/g,time):`السلام عليكم ${name}، بخصوص موعدك في ${clinic.name} 🦷`;
+  window.open('https://wa.me/'+phone.replace(/\D/g,'')+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+/* ADD APPT */
+function openAddAppt(){
+  document.getElementById('maN').value='';document.getElementById('maP').value='';document.getElementById('maNt').value='';
+  document.getElementById('maD').value=ds(new Date());document.getElementById('maT').value='09:00';
+  document.getElementById('maS').innerHTML=svcs.map(s=>`<option value="${esc(s.name)}">${esc(s.name)}</option>`).join('');
+  opM('mAddAppt');
+}
+async function saveAppt(){
+  const nm=document.getElementById('maN').value.trim(),ph=fullPhone(getCC('maCC'),document.getElementById('maP').value),sv=document.getElementById('maS').value,dt=document.getElementById('maD').value,tm=document.getElementById('maT').value;
+  if(!nm||!ph||!sv||!dt||!tm){toast('⚠️ كل الحقول المطلوبة يجب ملؤها');return;}
+  const btn=document.getElementById('mAddOk');btn.disabled=true;btn.textContent='جاري الحفظ...';
+  const dayNm=DNS[new Date(dt).getDay()];
+  await api('/rest/v1/appointments',{method:'POST',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify({clinic_id:clinic.id,patient_name:nm,patient_phone:ph,service:sv,appointment_date:dt,appointment_time:tm,preferred_day:dayNm,preferred_time:tm,note:document.getElementById('maNt').value.trim(),status:'confirmed'})});
+  btn.disabled=false;btn.textContent='✅ حفظ الموعد';clsM('mAddAppt');loadAppts();toast('✅ تم إضافة الموعد');
+}
+
+/* NOTES */
+function opNotes(id,name,notes,vis){nId=id;document.getElementById('nPat').textContent=name;document.getElementById('nTxt').value=notes;document.getElementById('nVis').checked=vis==='1';opM('mNotes');}
+async function saveNotes(){
+  const nt=document.getElementById('nTxt').value,vi=document.getElementById('nVis').checked;
+  await api('/rest/v1/appointments?id=eq.'+nId,{method:'PATCH',body:JSON.stringify({doctor_notes:nt,notes_visible:vi})});
+  appts=appts.map(a=>a.id==nId?{...a,doctor_notes:nt,notes_visible:vi}:a);
+  clsM('mNotes');renderT();renRecent();toast('📝 تم حفظ الملاحظة');
+}
+
+/* PRESCRIPTIONS */
+async function loadRx(){const d=await api('/rest/v1/prescriptions?clinic_id=eq.'+clinic.id+'&select=*&order=created_at.desc');rxAll=d||[];renderRx();}
+function renderRx(){
+  const s=(document.getElementById('rxSrch')||{value:''}).value.trim().toLowerCase();
+  let d=s?rxAll.filter(r=>(r.patient_name||'').toLowerCase().includes(s)||(r.patient_phone||'').includes(s)||(r.medication_name||'').toLowerCase().includes(s)):rxAll;
+  const c=document.getElementById('rxCont');
+  if(!d.length){c.innerHTML='<div class="em"><div class="ei">💊</div>لا توجد وصفات</div>';return;}
+  c.innerHTML='<div class="rxg">'+d.map(r=>`<div class="rxc"><div class="rxi"><div class="rxp" onclick="openPat('${esc(r.patient_phone)}')">${esc(r.patient_name)}</div><div class="rxph">📞 ${esc(r.patient_phone)}</div><div class="rxm">💊 ${esc(r.medication_name)}</div><div class="rxd">${r.dosage?'🔢 '+esc(r.dosage)+'<br>':''}${r.duration?'⏱ '+esc(r.duration)+'<br>':''}${r.instructions?'📋 '+esc(r.instructions):''}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:.38rem"><div style="font-size:.71rem;color:var(--tx2)">📅 ${fmtD(r.prescribed_at||r.created_at)}</div><button class="rxdl" data-id="${r.id}" onclick="delRx(this)">🗑</button></div></div>`).join('')+'</div>';
+}
+function openRx(){['rxPh','rxPn','rxMd','rxDs','rxDr','rxIn'].forEach(id=>document.getElementById(id).value='');document.getElementById('rxAp').innerHTML='<option value="">— بدون ربط —</option>';document.getElementById('dWarn').style.display='none';opM('mRx');}
+function opRxFor(ph,nm,apId){
+  openRx();const cc=ph.startsWith('972')?'972':'970';const localPh=ph.replace(/^(970|972)/,'');
+  document.getElementById('rxCC').value=cc;document.getElementById('rxPh').value=localPh;document.getElementById('rxPn').value=nm;
+  const a=appts.find(x=>x.id==apId);
+  if(a){const opt=document.createElement('option');opt.value=apId;opt.textContent=esc(a.service)+' — '+esc(a.appointment_date||a.preferred_day||'');opt.selected=true;document.getElementById('rxAp').appendChild(opt);}
+}
+function afPat(){
+  const ph=fullPhone(getCC('rxCC'),document.getElementById('rxPh').value);
+  const found=appts.filter(a=>a.patient_phone===ph);
+  if(found.length){document.getElementById('rxPn').value=found[0].patient_name;const sel=document.getElementById('rxAp');sel.innerHTML='<option value="">— بدون ربط —</option>'+found.slice(0,8).map(a=>`<option value="${a.id}">${esc(a.service)} — ${esc(a.appointment_date||a.preferred_day||'')} (${fmtD(a.created_at)})</option>`).join('');}
+}
+let drugT=null;
+async function chkDrug(name){
+  if(!CK||name.length<3){document.getElementById('dWarn').style.display='none';return;}
+  clearTimeout(drugT);
+  drugT=setTimeout(async()=>{
+    const ph=fullPhone(getCC('rxCC'),document.getElementById('rxPh').value);
+    const ex=rxAll.filter(r=>r.patient_phone===ph).map(r=>r.medication_name);
+    if(!ex.length){document.getElementById('dWarn').style.display='none';return;}
+    const el=document.getElementById('dWarn');el.style.display='block';el.style.background='rgba(100,100,120,.1)';el.style.border='1px solid rgba(100,100,120,.15)';el.style.color='var(--tx2)';el.textContent='🔍 جاري فحص التفاعلات...';
+    const res=await callClaude(`أنت صيدلاني. المريض يأخذ: ${ex.join('، ')}. الدواء الجديد: ${name}. أجب بـJSON فقط: {"hasInteraction":false,"warning":"","availableInPalestine":true,"alternatives":[]}`,true);
+    if(!res)return;
+    if(res.hasInteraction){el.style.background='rgba(245,158,11,.08)';el.style.border='1px solid rgba(245,158,11,.18)';el.style.color='var(--or)';el.textContent='⚠️ '+res.warning;}
+    else if(!res.availableInPalestine){el.style.background='rgba(239,68,68,.06)';el.style.border='1px solid rgba(239,68,68,.13)';el.style.color='var(--rd)';el.textContent='🚫 قد لا يكون متوفراً — بدائل: '+(res.alternatives||[]).join('، ');}
+    else{el.style.background='rgba(34,197,94,.06)';el.style.border='1px solid rgba(34,197,94,.13)';el.style.color='var(--gr)';el.textContent='✅ لا توجد تفاعلات';}
+  },1200);
+}
+async function saveRx(){
+  const ph=fullPhone(getCC('rxCC'),document.getElementById('rxPh').value),nm=document.getElementById('rxPn').value.trim(),md=document.getElementById('rxMd').value.trim();
+  if(!ph||!nm||!md){toast('⚠️ رقم الهاتف والاسم والدواء مطلوبة');return;}
+  const btn=document.getElementById('rxOk');btn.disabled=true;btn.textContent='جاري الحفظ...';
+  const apId=document.getElementById('rxAp').value||null;
+  const body={clinic_id:clinic.id,patient_phone:ph,patient_name:nm,medication_name:md,dosage:document.getElementById('rxDs').value.trim(),duration:document.getElementById('rxDr').value.trim(),instructions:document.getElementById('rxIn').value.trim()};
+  if(apId)body.appointment_id=parseInt(apId);
+  await api('/rest/v1/prescriptions',{method:'POST',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify(body)});
+  btn.disabled=false;btn.textContent='💊 حفظ';clsM('mRx');loadRx();toast('✅ تمت إضافة الوصفة');
+}
+async function delRx(btn){if(!confirm('حذف؟'))return;await api('/rest/v1/prescriptions?id=eq.'+btn.dataset.id,{method:'DELETE'});rxAll=rxAll.filter(r=>r.id!=btn.dataset.id);renderRx();toast('🗑 تم الحذف');}
+
+/* SCRIBE */
+let recog=null,isRec=false,scrTxt='',scrId=null;
+function opScr(id,nm){scrId=id;scrTxt='';isRec=false;document.getElementById('scPat').textContent=nm;document.getElementById('scTxt').textContent='سيظهر النص هنا...';document.getElementById('scRes').innerHTML='';document.getElementById('scAnal').style.display='none';document.getElementById('scBtn').textContent='🎙️ ابدأ التسجيل';document.getElementById('scBtn').style.background='linear-gradient(135deg,var(--rd),#ff7070)';opM('mScribe');}
+function togScr(){
+  if(isRec){if(recog)recog.stop();isRec=false;document.getElementById('scBtn').textContent='🎙️ ابدأ التسجيل';document.getElementById('scBtn').style.background='linear-gradient(135deg,var(--rd),#ff7070)';if(scrTxt)document.getElementById('scAnal').style.display='block';}
+  else{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast('⚠️ استخدم Chrome للتسجيل');return;}recog=new SR();recog.continuous=true;recog.interimResults=true;recog.lang='ar-SA';recog.onresult=e=>{let it='';for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)scrTxt+=e.results[i][0].transcript+' ';else it+=e.results[i][0].transcript;}document.getElementById('scTxt').textContent=scrTxt+it;};recog.onerror=e=>toast('خطأ: '+e.error);recog.start();isRec=true;document.getElementById('scBtn').textContent='⏹️ إيقاف التسجيل';document.getElementById('scBtn').style.background='linear-gradient(135deg,var(--or),#f5c842)';document.getElementById('scAnal').style.display='none';}
+}
+async function analScr(){
+  if(!scrTxt.trim()){toast('⚠️ لا يوجد نص');return;}
+  const btn=document.getElementById('scAnal');btn.disabled=true;btn.textContent='🧠 جاري التحليل...';
+  const a=appts.find(x=>x.id==scrId);
+  const res=await callClaude(`أنت مساعد طبي. الدكتور سجّل: "${scrTxt}" للمريض ${a?.patient_name||''} (${a?.service||''}). استخرج JSON: {"symptoms":"","diagnosis":"","medications":[],"dosage":"","instructions":"","notes":""}`,true);
+  btn.disabled=false;btn.textContent='🧠 تحليل بالذكاء الاصطناعي';
+  if(!res){toast('❌ فشل التحليل');return;}
+  document.getElementById('scRes').innerHTML=`<div class="scr"><div class="scrl">✅ نتائج التحليل</div>${res.symptoms?`<div><strong style="color:var(--gold)">الأعراض:</strong> ${esc(res.symptoms)}</div>`:''}${res.diagnosis?`<div><strong style="color:var(--gold)">التشخيص:</strong> ${esc(res.diagnosis)}</div>`:''}${res.medications?.length?`<div><strong style="color:var(--gold)">الأدوية:</strong> ${res.medications.map(m=>esc(m)).join('، ')}</div>`:''}${res.notes?`<div><strong style="color:var(--gold)">الملاحظات:</strong> ${esc(res.notes)}</div>`:''}<div style="display:flex;gap:.45rem;margin-top:.72rem;flex-wrap:wrap"><button onclick="saveScrN('${esc(res.notes||res.diagnosis||'')}','${scrId}')" style="background:linear-gradient(135deg,#B8922A,#E8C97A);border:none;border-radius:8px;padding:.48rem .95rem;color:#070714;font-family:'Tajawal',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">💾 حفظ كملاحظة</button>${res.medications?.length?`<button onclick="prfRx('${esc(JSON.stringify(res))}')" style="background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.22);border-radius:8px;padding:.48rem .95rem;color:var(--bl);font-family:'Tajawal',sans-serif;font-size:.8rem;cursor:pointer">💊 إضافة وصفة</button>`:''}</div></div>`;
+}
+async function saveScrN(notes,id){await api('/rest/v1/appointments?id=eq.'+id,{method:'PATCH',body:JSON.stringify({doctor_notes:notes,notes_visible:true})});appts=appts.map(a=>a.id==id?{...a,doctor_notes:notes}:a);clsM('mScribe');renderT();renRecent();toast('✅ تم حفظ الملاحظة');}
+function prfRx(jsonStr){try{const r=JSON.parse(jsonStr);const a=appts.find(x=>x.id==scrId);clsM('mScribe');opRxFor(a?.patient_phone||'',a?.patient_name||'',scrId);if(r.medications?.length)document.getElementById('rxMd').value=r.medications[0];if(r.dosage)document.getElementById('rxDs').value=r.dosage;if(r.instructions)document.getElementById('rxIn').value=r.instructions;}catch(e){}}
+
+/* PATIENT PROFILE */
+async function srchPat(){
+  const phone=document.getElementById('pSrch').value.trim();if(!phone){toast('⚠️ أدخل رقم الهاتف');return;}
+  const res=document.getElementById('pResult');res.innerHTML='<div style="text-align:center;padding:2rem"><div class="sp"></div></div>';
+  const [pa,rx]=await Promise.all([api('/rest/v1/appointments?clinic_id=eq.'+clinic.id+'&patient_phone=eq.'+encodeURIComponent(phone)+'&select=*&order=created_at.desc'),api('/rest/v1/prescriptions?clinic_id=eq.'+clinic.id+'&patient_phone=eq.'+encodeURIComponent(phone)+'&select=*&order=created_at.desc')]);
+  if(!pa||!pa.length){res.innerHTML='<div class="em"><div class="ei">🔍</div>لا توجد سجلات بهذا الرقم</div>';return;}
+  const nm=pa[0].patient_name,comp=pa.filter(a=>a.status==='completed').length;
+  let rev=0;pa.filter(a=>a.status==='completed').forEach(a=>{const s=svcs.find(sv=>sv.name===a.service);if(s&&s.price)rev+=parseFloat(s.price);});
+  res.innerHTML=`<div class="ph"><div class="pn">👤 ${esc(nm)}</div><div class="pst"><div class="ps">📱 <strong>${esc(phone)}</strong></div><div class="ps">🏥 الزيارات: <strong>${pa.length}</strong></div><div class="ps">🏁 مكتملة: <strong>${comp}</strong></div><div class="ps">💊 وصفات: <strong>${(rx||[]).length}</strong></div>${rev>0?`<div class="ps">💰 إجمالي: <strong style="color:var(--pu)">${rev}₪</strong></div>`:''}</div></div>
+<div class="pt3">📅 المواعيد (${pa.length})</div>
+${pa.map(a=>`<div class="pa"><div><strong>${esc(a.service)}</strong><span style="color:var(--tx2);font-size:.74rem;margin-right:.45rem">${esc(a.appointment_date||a.preferred_day||'—')} ${esc(a.appointment_time||a.preferred_time||'')} | ${fmtD(a.created_at)}</span>${a.doctor_notes?`<br><span style="font-size:.74rem;color:var(--gold)">📋 ${esc(a.doctor_notes)}</span>`:''}</div>${bdg(a.status)}</div>`).join('')}
+${(rx||[]).length?`<div class="pt3">💊 الوصفات (${rx.length})</div>${rx.map(r=>`<div class="pa"><div><strong>💊 ${esc(r.medication_name)}</strong>${r.dosage?` — ${esc(r.dosage)}`:''}<span style="color:var(--tx2);font-size:.74rem;margin-right:.45rem">${fmtD(r.prescribed_at||r.created_at)}</span></div></div>`).join('')}`:''}`;
+}
+
+/* CALENDAR */
+function getMon(d){const day=d.getDay();const diff=d.getDate()-(day===0?6:day-1);return new Date(new Date(d).setDate(diff));}
+function chW(dir){calWk=new Date(calWk);calWk.setDate(calWk.getDate()+dir*7);renCal();}
+function renCal(){
+  if(!calWk)return;
+  const days=[];for(let i=0;i<7;i++){const d=new Date(calWk);d.setDate(calWk.getDate()+i);days.push(d);}
+  document.getElementById('calLbl').textContent=`${days[0].getDate()}/${days[0].getMonth()+1} — ${days[6].getDate()}/${days[6].getMonth()+1}/${days[6].getFullYear()}`;
+  const today=ds(new Date());
+  document.getElementById('calH').innerHTML=days.map(d=>`<div class="ch" style="${ds(d)===today?'color:var(--gold-l)':''}">${DSH[d.getDay()]}<br><small style="font-weight:400">${d.getDate()}</small></div>`).join('');
+  document.getElementById('calB').innerHTML=days.map(d=>{
+    const dstr=ds(d),isTd=dstr===today;
+    const da=appts.filter(a=>a.appointment_date===dstr).sort((a,b)=>(a.appointment_time||'').localeCompare(b.appointment_time||''));
+    return `<div class="cc${isTd?' td2':''}"><div class="cd3">${d.getDate()}</div>${da.length?da.map(a=>`<div class="ck ck-${a.status}" title="${esc(a.patient_name)} — ${esc(a.service)}">${a.appointment_time?a.appointment_time.substring(0,5)+' ':''}${esc(a.patient_name.split(' ')[0])}</div>`).join(''):'<div style="font-size:.62rem;color:var(--tx3);text-align:center;padding-top:.2rem">—</div>'}</div>`;
+  }).join('');
+}
+
+/* ANALYTICS */
+function renderStats(){
+  if(!appts.length){document.getElementById('sBars').innerHTML='<div class="em"><div class="ei">📊</div>لا توجد بيانات</div>';return;}
+  const sc={};appts.forEach(a=>{sc[a.service]=(sc[a.service]||0)+1;});
+  const top=Object.entries(sc).sort((a,b)=>b[1]-a[1]).slice(0,6),max=top[0]?.[1]||1;
+  document.getElementById('sBars').innerHTML='<div style="padding:1rem 1.3rem">'+top.map(([n,c])=>`<div class="bar"><div class="bl2">${esc(n)}</div><div class="bt"><div class="bf" style="width:${Math.round(c/max*100)}%"></div></div><div class="bc2">${c}</div></div>`).join('')+'</div>';
+  const now=new Date(),wA=new Date(now-7*24*3600000),mA=new Date(now-30*24*3600000);
+  const wk=appts.filter(a=>new Date(a.created_at)>wA).length,mo=appts.filter(a=>new Date(a.created_at)>mA).length;
+  const uniq=new Set(appts.map(a=>a.patient_phone)).size,rate=appts.length?Math.round(appts.filter(a=>a.status==='completed').length/appts.length*100):0;
+  let rev=0;appts.filter(a=>a.status==='completed'&&new Date(a.created_at)>mA).forEach(a=>{const s=svcs.find(sv=>sv.name===a.service);if(s&&s.price)rev+=parseFloat(s.price);});
+  document.getElementById('sAct').innerHTML=`<div class="mic"><div class="mv">${wk}</div><div class="ml">📅 هذا الأسبوع</div></div><div class="mic"><div class="mv">${mo}</div><div class="ml">📆 هذا الشهر</div></div><div class="mic"><div class="mv">${uniq}</div><div class="ml">👥 إجمالي المرضى</div></div><div class="mic"><div class="mv">${rate}%</div><div class="ml">🏁 نسبة الإكمال</div></div>${rev>0?`<div class="mic" style="grid-column:span 2"><div class="mv" style="color:var(--pu)">${rev}₪</div><div class="ml">💰 إيرادات الشهر</div></div>`:''}`;
+}
+
+/* SERVICES */
+async function loadSvcs(){const d=await api('/rest/v1/services?clinic_id=eq.'+clinic.id+'&order=display_order');svcs=d||[];document.getElementById('svcL').innerHTML=(svcs).map(s=>`<div class="si2"><span class="sn">${s.icon} ${esc(s.name)}</span>${s.price>0?`<span class="sp2">${s.price}₪</span>`:''}<button class="sd" data-id="${s.id}" onclick="delSvc(this)">✕</button></div>`).join('');}
+async function addSvc(){const ic=document.getElementById('nSI').value.trim()||'🦷',nm=document.getElementById('nSN').value.trim(),pr=parseFloat(document.getElementById('nSP').value)||0;if(!nm)return;await api('/rest/v1/services',{method:'POST',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify({clinic_id:clinic.id,name:nm,icon:ic,price:pr,is_active:true})});document.getElementById('nSN').value='';document.getElementById('nSI').value='';document.getElementById('nSP').value='';loadSvcs();toast('✅ تمت الإضافة');}
+async function delSvc(btn){await api('/rest/v1/services?id=eq.'+btn.dataset.id,{method:'DELETE'});loadSvcs();toast('🗑 تم الحذف');}
+
+/* HOURS */
+async function loadHrs(){const d=await api('/rest/v1/working_hours?clinic_id=eq.'+clinic.id+'&select=*');hrs=d||[];renHrs();}
+function renHrs(){document.getElementById('hGrid').innerHTML=DS.map(day=>{const h=hrs.find(x=>x.day_name===day.n)||{is_open:day.n!=='الجمعة',open_time:'09:00',close_time:'17:00'};return `<div class="hr"><div class="hl"><label class="tg"><input type="checkbox" id="tg_${day.k}" ${h.is_open?'checked':''} onchange="togDay('${day.k}')"><span class="tgs"></span></label><span class="dn">${day.n}</span></div><div class="ht${h.is_open?'':' off'}" id="ht_${day.k}"><input type="time" value="${h.open_time}" id="ho_${day.k}" class="tf"/><span style="color:var(--tx2)">—</span><input type="time" value="${h.close_time}" id="hc_${day.k}" class="tf"/></div></div>`;}).join('');}
+function togDay(k){document.getElementById('ht_'+k).classList.toggle('off',!document.getElementById('tg_'+k).checked);}
+async function saveHrs(){const rows=DS.map(day=>({clinic_id:clinic.id,day_name:day.n,is_open:document.getElementById('tg_'+day.k).checked,open_time:document.getElementById('ho_'+day.k).value||'09:00',close_time:document.getElementById('hc_'+day.k).value||'17:00'}));await api('/rest/v1/working_hours',{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(rows)});hrs=rows;localStorage.setItem(sk,JSON.stringify({c:clinic,a:Date.now()}));toast('✅ تم حفظ ساعات الدوام');}
+
+/* COMMS */
+function swCT(tab,btn){document.querySelectorAll('.ctab').forEach(b=>b.classList.remove('on'));document.querySelectorAll('.cp').forEach(p=>p.classList.remove('on'));btn.classList.add('on');document.getElementById('cp-'+tab).classList.add('on');if(tab==='tm')renTm();if(tab==='in')renIn();}
+function getTm(){const d=new Date();d.setDate(d.getDate()+1);return{day:DNS[d.getDay()],date:ds(d)};}
+function bMsg(tmpl,a){return tmpl.replace(/{name}/g,a.patient_name||'').replace(/{clinic}/g,clinic.name||'').replace(/{day}/g,a.preferred_day||a.appointment_date||'').replace(/{time}/g,a.appointment_time||a.preferred_time||'').replace(/{link}/g,location.origin+'/'+clinic.slug);}
+function getT(id){return document.getElementById(id)?.value||'';}
+function doWA(ph,msg){window.open('https://wa.me/'+ph.replace(/\D/g,'')+'?text='+encodeURIComponent(msg),'_blank');}
+function renTm(){
+  const {day,date}=getTm();
+  const da=appts.filter(a=>(a.appointment_date===date||a.preferred_day===day)&&(a.status==='pending'||a.status==='confirmed'));
+  document.getElementById('tmTitle').textContent='📅 مواعيد '+day+' ('+da.length+')';
+  document.getElementById('tmSub').textContent=da.length?'اضغط لإرسال تذكير':'لا توجد مواعيد مؤكدة لغداً';
+  document.getElementById('sendAllBtn').style.display=da.length?'':'none';
+  document.getElementById('tmList').innerHTML=da.length?da.map(a=>{const msg=bMsg(getT('tRem'),a);return `<div class="rmc"><div><div class="rmn">👤 ${esc(a.patient_name)}</div><div class="rmm">📱 ${esc(a.patient_phone)} | 🦷 ${esc(a.service)} | 🕐 ${esc(a.appointment_time||a.preferred_time||'—')}</div></div><div style="display:flex;gap:.45rem;align-items:center">${bdg(a.status)}<button class="wab" data-p="${esc(a.patient_phone)}" data-m="${esc(msg)}" onclick="doWA(this.dataset.p,this.dataset.m)">💬 إرسال</button></div></div>`;}).join(''):`<div class="em"><div class="ei">📭</div>لا توجد مواعيد لغداً</div>`;
+}
+let rQ=[],rI=0;
+function sendAll(){const {day,date}=getTm();rQ=appts.filter(a=>(a.appointment_date===date||a.preferred_day===day)&&(a.status==='pending'||a.status==='confirmed'));if(!rQ.length){toast('لا توجد مواعيد');return;}rI=0;sendNx();}
+function sendNx(){if(rI>=rQ.length){toast('✅ تم إرسال '+rQ.length+' تذكير');return;}const a=rQ[rI];doWA(a.patient_phone,bMsg(getT('tRem'),a));rI++;if(rI<rQ.length){setTimeout(()=>{if(confirm('التالي: '+rQ[rI].patient_name+'؟'))sendNx();},500);}else toast('✅ تم الإرسال');}
+function renIn(){
+  const now=new Date(),ago=new Date(now-60*24*3600000),map={};
+  appts.filter(a=>a.status==='completed').forEach(a=>{const d=new Date(a.created_at);if(!map[a.patient_phone]||d>map[a.patient_phone].d)map[a.patient_phone]={nm:a.patient_name,ph:a.patient_phone,d};});
+  const inactive=Object.values(map).filter(p=>p.d<ago).sort((a,b)=>a.d-b.d);
+  document.getElementById('inList').innerHTML=inactive.length?inactive.map(p=>{const days=Math.floor((now-p.d)/(24*3600000));const msg=getT('tFol').replace(/{name}/g,p.nm).replace(/{clinic}/g,clinic.name).replace(/{link}/g,location.origin+'/'+clinic.slug);return `<div class="inac"><div><div style="font-weight:700">${esc(p.nm)}</div><div style="font-size:.74rem;color:var(--tx2)">📱 ${esc(p.ph)} | آخر زيارة: ${days} يوم مضى</div></div><button class="wab" data-p="${esc(p.ph)}" data-m="${esc(msg)}" onclick="doWA(this.dataset.p,this.dataset.m)">💬 ذكّره</button></div>`;}).join(''):`<div class="em"><div class="ei">🎉</div>كل مرضاك زاروا خلال 60 يوم!</div>`;}
+async function saveTmpls(){const vals=[{key:'msg_template_reminder',value:getT('tRem')},{key:'msg_template_confirm',value:getT('tCon')},{key:'msg_template_followup',value:getT('tFol')}];await Promise.all(vals.map(v=>api('/rest/v1/system_settings',{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(v)})));toast('✅ تم حفظ القوالب');}
+async function loadTmpls(){const d=await api('/rest/v1/system_settings?key=in.(msg_template_reminder,msg_template_confirm,msg_template_followup)&select=key,value');if(!d)return;const m={msg_template_reminder:'tRem',msg_template_confirm:'tCon',msg_template_followup:'tFol'};d.forEach(r=>{const el=document.getElementById(m[r.key]);if(el&&r.value)el.value=r.value;});}
+
+/* SETTINGS */
+function loadSettings(){document.getElementById('sN').value=clinic.name||'';document.getElementById('sD').value=clinic.doctor_name||'';document.getElementById('sS').value=clinic.specialty||'';document.getElementById('sW').value=clinic.whatsapp||'';document.getElementById('sA').value=clinic.address||'';document.getElementById('sCl').value=clinic.primary_color||'#C9A84C';const lo=clinic.logo_url||'';document.getElementById('sLo').value=lo;if(lo){document.getElementById('logoI').src=lo;document.getElementById('logoPrv').style.display='block';}}
+function prvLogo(){const url=document.getElementById('sLo').value.trim();if(url){document.getElementById('logoI').src=url;document.getElementById('logoPrv').style.display='block';}else document.getElementById('logoPrv').style.display='none';}
+async function saveCI(){const up={name:document.getElementById('sN').value,doctor_name:document.getElementById('sD').value,specialty:document.getElementById('sS').value,whatsapp:document.getElementById('sW').value,address:document.getElementById('sA').value,logo_url:document.getElementById('sLo').value,primary_color:document.getElementById('sCl').value};await api('/rest/v1/clinics?id=eq.'+clinic.id,{method:'PATCH',body:JSON.stringify(up)});Object.assign(clinic,up);localStorage.setItem(sk,JSON.stringify({c:clinic,a:Date.now()}));document.getElementById('sbName').textContent=clinic.name;toast('✅ تم الحفظ');}
+async function chgPass(){const np=document.getElementById('nP').value,cp=document.getElementById('cP').value;if(!np){toast('⚠️ أدخل كلمة المرور');return;}if(np!==cp){toast('⚠️ كلمتا المرور غير متطابقتين');return;}await api('/rest/v1/clinics?id=eq.'+clinic.id,{method:'PATCH',body:JSON.stringify({admin_password:np})});clinic.admin_password=np;localStorage.setItem(sk,JSON.stringify({c:clinic,a:Date.now()}));document.getElementById('nP').value='';document.getElementById('cP').value='';toast('🔐 تم التغيير');}
+function cpyLink(){navigator.clipboard.writeText(location.origin+'/'+clinic.slug);toast('📋 تم النسخ');}
+
+/* BLOCKED */
+async function loadBlocked(){const d=await api('/rest/v1/blocked_times?clinic_id=eq.'+clinic.id+'&order=blocked_date');document.getElementById('blkList').innerHTML=(d||[]).length?(d||[]).map(b=>`<div class="bli"><span>📅 ${esc(b.blocked_date)}${b.reason?' — '+esc(b.reason):''}</span><button class="sd" data-id="${b.id}" onclick="delBlk(this)">✕</button></div>`).join(''):'<p style="color:var(--tx2);text-align:center;padding:1rem;font-size:.83rem">لا توجد أوقات مسدودة</p>';}
+async function addBlk(){const dt=document.getElementById('blkD').value,rs=document.getElementById('blkR').value.trim();if(!dt){toast('⚠️ اختر تاريخاً');return;}await api('/rest/v1/blocked_times',{method:'POST',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify({clinic_id:clinic.id,blocked_date:dt,reason:rs,is_full_day:true})});document.getElementById('blkD').value='';document.getElementById('blkR').value='';loadBlocked();toast('🚫 تمت الإضافة');}
+async function delBlk(btn){await api('/rest/v1/blocked_times?id=eq.'+btn.dataset.id,{method:'DELETE'});loadBlocked();}
+
+/* FEEDBACK */
+function swFT(tab,btn){document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('fbNew').style.display=tab==='new'?'block':'none';document.getElementById('fbMine').style.display=tab==='mine'?'block':'none';if(tab==='mine')loadMyFb();}
+async function subFb(){const t=document.getElementById('fbTit').value.trim(),d2=document.getElementById('fbDes').value.trim();if(!t||!d2){toast('⚠️ العنوان والوصف مطلوبان');return;}const btn=document.getElementById('fbBtn');btn.disabled=true;btn.textContent='⏳ جاري الإرسال...';await api('/rest/v1/feedbacks',{method:'POST',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify({clinic_id:clinic.id,clinic_name:clinic.name,doctor_name:clinic.doctor_name,type:document.getElementById('fbType').value,priority:document.getElementById('fbPri').value,title:t,description:d2,status:'new'})});btn.disabled=false;btn.textContent='📤 إرسال الطلب';document.getElementById('fbTit').value='';document.getElementById('fbDes').value='';toast('✅ تم إرسال طلبك!');setTimeout(()=>{swFT('mine',document.getElementById('fbt2'));document.getElementById('fbt2').classList.add('on');document.getElementById('fbt1').classList.remove('on');},1500);}
+async function loadMyFb(){const d=await api('/rest/v1/feedbacks?clinic_id=eq.'+clinic.id+'&select=*&order=created_at.desc');const c=document.getElementById('fbMineL');if(!d||!d.length){c.innerHTML='<div class="em"><div class="ei">💡</div>لم ترسل أي طلبات بعد</div>';return;}const tM={feature:'✨ ميزة',bug:'🐛 مشكلة',question:'❓ استفسار'};const sM={new:'b-nw 🆕 جديد',reviewing:'b-rv 🔍 دراسة',done:'b-dn ✅ مكتمل',rejected:'b-rj ❌ مرفوض'};c.innerHTML=d.map(f=>{const[sc,...sr]=(sM[f.status]||'b-nw 🆕').split(' ');return `<div class="fbc"><div class="fbct" style="display:flex;justify-content:space-between;align-items:flex-start;gap:.4rem;flex-wrap:wrap"><span>${esc(f.title)}</span><div style="display:flex;gap:.32rem"><span class="bg b-${f.type==='feature'?'fe':f.type==='bug'?'bu':'qu'}">${tM[f.type]||f.type}</span><span class="bg ${sc}">${sr.join(' ')}</span></div></div><div class="fbcm">📅 ${fmtD(f.created_at)}</div><div class="fbcd">${esc(f.description)}</div>${f.admin_reply?`<div class="fbrb">💬 رد الإدارة: ${esc(f.admin_reply)}</div>`:'<div style="font-size:.73rem;color:var(--tx2);margin-top:.35rem">⏳ في انتظار الرد</div>'}</div>`;}).join('');}
+
+init();
+</script>
+</body>
+</html>
