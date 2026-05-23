@@ -1,0 +1,21 @@
+{
+  "name": "نظام إدارة العيادة",
+  "short_name": "العيادة",
+  "description": "نظام ذكي لإدارة مواعيد وملفات المرضى",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0D0D1A",
+  "theme_color": "#C9A84C",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230D0D1A'/><text y='.9em' font-size='75' x='10'>🦷</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["medical", "productivity"]
+}
