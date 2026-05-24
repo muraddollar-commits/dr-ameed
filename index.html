@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DentFlow — نظام إدارة عيادات الأسنان الذكي</title>
+<meta name="description" content="منصة متكاملة لإدارة عيادات الأسنان بالذكاء الاصطناعي">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--gold-l:#E8C97A;--gold-d:rgba(201,168,76,.12);
+  --bg:#05050F;--bg2:#0A0A1E;--bg3:#0F0F28;
+  --tx:#E8E4DC;--tx2:#9A96A0;--tx3:#5A5670;
+  --gr:#22C55E;--bl:#60A5FA;--pu:#A78BFA;--rd:#EF4444;
+  --br:rgba(201,168,76,.12);--sh:0 20px 60px rgba(0,0,0,.5);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden;direction:rtl}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:6px}
+
+/* NAV */
+nav{position:fixed;top:0;right:0;left:0;z-index:100;padding:.9rem 2rem;display:flex;align-items:center;justify-content:space-between;background:rgba(5,5,15,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--br);transition:all .3s}
+nav.scrolled{background:rgba(5,5,15,.98);box-shadow:0 4px 30px rgba(0,0,0,.4)}
+.nav-logo{display:flex;align-items:center;gap:.65rem;text-decoration:none}
+.nav-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold-l));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.nav-logo-text{font-family:'Amiri',serif;font-size:1.3rem;color:var(--gold-l);font-weight:700}
+.nav-links{display:flex;align-items:center;gap:2rem}
+.nav-links a{color:var(--tx2);text-decoration:none;font-size:.9rem;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--gold-l)}
+.nav-cta{background:linear-gradient(135deg,#B8922A,#E8C97A);border:none;border-radius:10px;padding:.55rem 1.3rem;color:#05050F;font-family:'Tajawal',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .25s;text-decoration:none;display:inline-block}
+.nav-cta:hover{box-shadow:0 4px 20px rgba(201,168,76,.4);transform:translateY(-1px)}
+.ham-btn{display:none;background:none;border:1px solid var(--br);border-radius:8px;width:38px;height:38px;align-items:center;justify-content:center;cursor:pointer;color:var(--gold);font-size:1.2rem}
+.mob-menu{display:none;position:fixed;top:62px;right:0;left:0;background:rgba(5,5,15,.98);border-bottom:1px solid var(--br);padding:1rem 2rem;flex-direction:column;gap:1rem;z-index:99;backdrop-filter:blur(16px)}
+.mob-menu.open{display:flex}
+.mob-menu a{color:var(--tx2);text-decoration:none;font-size:.95rem;padding:.5rem 0;border-bottom:1px solid var(--br)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:7rem 2rem 4rem;position:relative;overflow:hidden;text-align:center}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(201,168,76,.06),transparent 60%),radial-gradient(ellipse 50% 40% at 20% 80%,rgba(96,165,250,.04),transparent 50%),radial-gradient(ellipse 40% 30% at 80% 20%,rgba(167,139,250,.04),transparent 50%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,168,76,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,.04) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black,transparent)}
+.hero-content{position:relative;z-index:2;max-width:800px}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:20px;padding:.4rem 1rem;font-size:.82rem;color:var(--gold-l);margin-bottom:1.75rem;animation:fadeInDown .6s ease}
+.hero-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse2 2s infinite}
+@keyframes pulse2{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.hero-title{font-family:'Amiri',serif;font-size:clamp(2.2rem,5vw,4rem);line-height:1.25;margin-bottom:1.25rem;animation:fadeInUp .7s ease .1s both}
+.hero-title span{background:linear-gradient(135deg,var(--gold),var(--gold-l),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(1rem,2vw,1.2rem);color:var(--tx2);line-height:1.7;margin-bottom:2.25rem;animation:fadeInUp .7s ease .2s both}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeInUp .7s ease .3s both}
+.btn-gold{background:linear-gradient(135deg,#B8922A,#E8C97A,#B8922A);background-size:200%;border:none;border-radius:14px;padding:.85rem 2rem;color:#05050F;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all .3s;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem}
+.btn-gold:hover{background-position:100%;box-shadow:0 8px 30px rgba(201,168,76,.5);transform:translateY(-2px)}
+.btn-outline{background:transparent;border:1px solid var(--br);border-radius:14px;padding:.85rem 2rem;color:var(--tx);font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:all .3s;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold-l);background:var(--gold-d)}
+.hero-mockup{margin-top:4rem;position:relative;animation:fadeInUp .8s ease .4s both}
+.mockup-wrap{background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(167,139,250,.05));border:1px solid var(--br);border-radius:20px;padding:1px;max-width:800px;margin:0 auto;box-shadow:0 40px 100px rgba(0,0,0,.6)}
+.mockup-inner{background:var(--bg2);border-radius:19px;overflow:hidden}
+.mockup-bar{background:var(--bg3);padding:.75rem 1.25rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid var(--br)}
+.mockup-dots{display:flex;gap:.4rem}
+.mockup-dots span{width:10px;height:10px;border-radius:50%}
+.mockup-dots span:nth-child(1){background:#ef4444}
+.mockup-dots span:nth-child(2){background:#f59e0b}
+.mockup-dots span:nth-child(3){background:#22c55e}
+.mockup-url{flex:1;background:rgba(255,255,255,.05);border-radius:6px;padding:.3rem .75rem;font-size:.72rem;color:var(--tx2);text-align:center}
+.mockup-screen{padding:1.5rem;display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem}
+.mock-card{background:var(--bg3);border:1px solid var(--br);border-radius:12px;padding:1rem;text-align:center}
+.mock-num{font-size:1.6rem;font-weight:900;margin-bottom:.2rem}
+.mock-lbl{font-size:.68rem;color:var(--tx2)}
+.mc1 .mock-num{color:var(--gold-l)}.mc2 .mock-num{color:var(--or,#F59E0B)}.mc3 .mock-num{color:var(--gr)}.mc4 .mock-num{color:var(--pu)}
+.mock-chart{grid-column:span 4;background:var(--bg3);border:1px solid var(--br);border-radius:12px;padding:1rem;display:flex;align-items:flex-end;gap:.4rem;height:80px}
+.mock-bar-item{flex:1;background:linear-gradient(to top,var(--gold),var(--gold-l));border-radius:4px 4px 0 0;opacity:.7;transition:all .5s}
+
+/* FLOATING ELEMENTS */
+.float-badge{position:absolute;background:var(--bg3);border:1px solid var(--br);border-radius:12px;padding:.6rem .9rem;font-size:.78rem;display:flex;align-items:center;gap:.4rem;box-shadow:var(--sh);animation:float 3s ease-in-out infinite}
+.fb1{top:20%;right:5%;animation-delay:0s}
+.fb2{top:35%;left:5%;animation-delay:1s}
+.fb3{bottom:25%;right:8%;animation-delay:2s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* STATS STRIP */
+.stats-strip{padding:3rem 2rem;background:var(--bg2);border-top:1px solid var(--br);border-bottom:1px solid var(--br)}
+.stats-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;text-align:center}
+.stat-item .num{font-size:2.5rem;font-weight:900;color:var(--gold-l);line-height:1}
+.stat-item .lbl{font-size:.83rem;color:var(--tx2);margin-top:.35rem}
+
+/* SECTION */
+.section{padding:6rem 2rem}
+.container{max-width:1100px;margin:0 auto}
+.section-tag{display:inline-block;background:var(--gold-d);border:1px solid rgba(201,168,76,.2);border-radius:20px;padding:.38rem 1rem;font-size:.78rem;color:var(--gold-l);font-weight:600;margin-bottom:1rem}
+.section-title{font-family:'Amiri',serif;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.3;margin-bottom:1rem}
+.section-title span{color:var(--gold-l)}
+.section-sub{font-size:1rem;color:var(--tx2);line-height:1.7;max-width:600px}
+.text-center{text-align:center}.mx-auto{margin-left:auto;margin-right:auto}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3.5rem}
+.feat-card{background:var(--bg2);border:1px solid var(--br);border-radius:20px;padding:1.75rem;transition:all .3s;position:relative;overflow:hidden}
+.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:.3s}
+.feat-card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,.4);border-color:rgba(201,168,76,.25)}
+.feat-card:hover::before{opacity:1}
+.feat-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1.1rem}
+.fi-gold{background:linear-gradient(135deg,rgba(201,168,76,.2),rgba(232,201,122,.1));border:1px solid rgba(201,168,76,.2)}
+.fi-blue{background:linear-gradient(135deg,rgba(96,165,250,.2),rgba(59,130,246,.1));border:1px solid rgba(96,165,250,.2)}
+.fi-green{background:linear-gradient(135deg,rgba(34,197,94,.2),rgba(22,163,74,.1));border:1px solid rgba(34,197,94,.2)}
+.fi-purple{background:linear-gradient(135deg,rgba(167,139,250,.2),rgba(139,92,246,.1));border:1px solid rgba(167,139,250,.2)}
+.fi-red{background:linear-gradient(135deg,rgba(239,68,68,.15),rgba(220,38,38,.08));border:1px solid rgba(239,68,68,.18)}
+.fi-cyan{background:linear-gradient(135deg,rgba(34,211,238,.2),rgba(6,182,212,.1));border:1px solid rgba(34,211,238,.2)}
+.feat-title{font-size:1rem;font-weight:700;margin-bottom:.5rem;color:var(--tx)}
+.feat-desc{font-size:.85rem;color:var(--tx2);line-height:1.65}
+
+/* AI FEATURES HIGHLIGHT */
+.ai-section{background:linear-gradient(135deg,rgba(10,10,30,.98),rgba(20,20,50,.98));border-top:1px solid var(--br);border-bottom:1px solid var(--br);padding:6rem 2rem;position:relative;overflow:hidden}
+.ai-section::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(167,139,250,.06),transparent 70%);pointer-events:none}
+.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.ai-features-list{display:flex;flex-direction:column;gap:1.1rem;margin-top:2rem}
+.ai-feature-item{display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.25rem;background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.12);border-radius:14px;transition:.25s}
+.ai-feature-item:hover{background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.25)}
+.ai-feat-ic{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,var(--pu));display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.ai-feat-title{font-size:.9rem;font-weight:700;color:var(--tx);margin-bottom:.25rem}
+.ai-feat-desc{font-size:.8rem;color:var(--tx2);line-height:1.55}
+.ai-visual{position:relative}
+.ai-card{background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:20px;padding:1.5rem;margin-bottom:1rem}
+.ai-card-head{display:flex;align-items:center;gap:.65rem;margin-bottom:.75rem}
+.ai-avatar{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#7c3aed,var(--pu));display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.ai-card-title{font-size:.85rem;font-weight:700;color:var(--pu)}
+.ai-card-time{font-size:.7rem;color:var(--tx2);margin-right:auto}
+.ai-text{font-size:.83rem;color:var(--tx);line-height:1.65}
+.ai-scribe-demo{background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.15);border-radius:16px;padding:1.25rem}
+.ai-mic-btn{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--rd),#ff6b6b);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.2rem;margin:0 auto 1rem;box-shadow:0 0 0 8px rgba(239,68,68,.12)}
+.ai-wave{display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:.75rem}
+.ai-wave span{width:3px;background:var(--gr);border-radius:3px;animation:wave 1s ease-in-out infinite}
+.ai-wave span:nth-child(1){height:12px;animation-delay:0s}
+.ai-wave span:nth-child(2){height:22px;animation-delay:.1s}
+.ai-wave span:nth-child(3){height:18px;animation-delay:.2s}
+.ai-wave span:nth-child(4){height:28px;animation-delay:.3s}
+.ai-wave span:nth-child(5){height:16px;animation-delay:.4s}
+.ai-wave span:nth-child(6){height:24px;animation-delay:.5s}
+.ai-wave span:nth-child(7){height:14px;animation-delay:.6s}
+@keyframes wave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.5)}}
+.ai-result-pills{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.65rem}
+.ai-pill{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:.2rem .65rem;font-size:.75rem;color:var(--gr)}
+
+/* HOW IT WORKS */
+.how-section{padding:6rem 2rem;background:var(--bg2)}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:3.5rem;position:relative}
+.steps-grid::before{content:'';position:absolute;top:30px;right:12.5%;left:12.5%;height:2px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold),transparent);opacity:.3}
+.step-card{text-align:center;position:relative}
+.step-num{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-l));display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:#05050F;margin:0 auto 1.1rem;box-shadow:0 8px 24px rgba(201,168,76,.35)}
+.step-title{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.step-desc{font-size:.82rem;color:var(--tx2);line-height:1.6}
+
+/* PRICING */
+.pricing-section{padding:6rem 2rem}
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3.5rem}
+.plan-card{background:var(--bg2);border:1px solid var(--br);border-radius:24px;padding:2rem;position:relative;transition:.3s;overflow:hidden}
+.plan-card.featured{border-color:var(--gold);background:linear-gradient(145deg,rgba(201,168,76,.05),rgba(232,201,122,.02));transform:scale(1.03)}
+.plan-card.featured::before{content:'الأكثر طلباً';position:absolute;top:1rem;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),var(--gold-l));color:#05050F;font-size:.72rem;font-weight:800;padding:.25rem .85rem;border-radius:20px;white-space:nowrap}
+.plan-card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.plan-card.featured:hover{transform:scale(1.03) translateY(-4px)}
+.plan-name{font-size:.8rem;font-weight:700;color:var(--tx2);margin-bottom:.5rem;letter-spacing:.05em;text-transform:uppercase}
+.plan-price{display:flex;align-items:flex-end;gap:.3rem;margin-bottom:.25rem}
+.plan-amount{font-size:3rem;font-weight:900;color:var(--gold-l);line-height:1}
+.plan-currency{font-size:.9rem;color:var(--tx2);margin-bottom:.4rem}
+.plan-period{font-size:.8rem;color:var(--tx2)}
+.plan-desc{font-size:.83rem;color:var(--tx2);margin:.75rem 0 1.5rem;line-height:1.6;padding-bottom:1.5rem;border-bottom:1px solid var(--br)}
+.plan-features{display:flex;flex-direction:column;gap:.7rem;margin-bottom:2rem}
+.plan-feat{display:flex;align-items:center;gap:.6rem;font-size:.85rem}
+.plan-feat-ic{color:var(--gr);font-size:.9rem;flex-shrink:0}
+.plan-feat-ic.x{color:var(--tx3)}
+.plan-btn{width:100%;background:linear-gradient(135deg,#25a244,#22C55E);border:none;border-radius:12px;padding:.9rem;color:#fff;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:.3s;display:flex;align-items:center;justify-content:center;gap:.5rem}
+.plan-btn:hover{box-shadow:0 6px 24px rgba(34,197,94,.45);transform:translateY(-1px)}
+.plan-btn.gold-btn{background:linear-gradient(135deg,#B8922A,#E8C97A,#B8922A);background-size:200%;color:#05050F}
+.plan-btn.gold-btn:hover{background-position:100%;box-shadow:0 6px 24px rgba(201,168,76,.4)}
+.pricing-note{text-align:center;font-size:.82rem;color:var(--tx2);margin-top:1.5rem}
+
+/* TESTIMONIALS */
+.testi-section{padding:6rem 2rem;background:var(--bg2)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3.5rem}
+.testi-card{background:var(--bg3);border:1px solid var(--br);border-radius:20px;padding:1.5rem}
+.testi-stars{display:flex;gap:.2rem;margin-bottom:.85rem;color:var(--gold)}
+.testi-text{font-size:.87rem;color:var(--tx);line-height:1.7;margin-bottom:1.25rem;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:.75rem}
+.testi-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-l));display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:#05050F}
+.testi-name{font-size:.88rem;font-weight:700}
+.testi-role{font-size:.75rem;color:var(--tx2)}
+
+/* FAQ */
+.faq-section{padding:6rem 2rem}
+.faq-list{max-width:720px;margin:3rem auto 0}
+.faq-item{border:1px solid var(--br);border-radius:14px;margin-bottom:.75rem;overflow:hidden;transition:.25s}
+.faq-item:hover{border-color:rgba(201,168,76,.25)}
+.faq-q{padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:.92rem;font-weight:600}
+.faq-arrow{transition:transform .3s;color:var(--gold);font-size:.9rem}
+.faq-item.open .faq-arrow{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.faq-item.open .faq-a{max-height:300px}
+.faq-a-inner{padding:0 1.4rem 1.1rem;font-size:.85rem;color:var(--tx2);line-height:1.7}
+
+/* CTA */
+.cta-section{padding:6rem 2rem;background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(167,139,250,.04));border-top:1px solid var(--br)}
+.cta-box{max-width:600px;margin:0 auto;text-align:center}
+.cta-title{font-family:'Amiri',serif;font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:1rem;line-height:1.3}
+.cta-sub{font-size:1rem;color:var(--tx2);margin-bottom:2.5rem;line-height:1.7}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--br);padding:3rem 2rem 2rem}
+.footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:3rem}
+.footer-brand p{font-size:.83rem;color:var(--tx2);line-height:1.7;margin-top:.75rem}
+.footer-col h4{font-size:.85rem;font-weight:700;color:var(--gold-l);margin-bottom:.85rem}
+.footer-col a{display:block;font-size:.82rem;color:var(--tx2);text-decoration:none;margin-bottom:.45rem;transition:color .2s}
+.footer-col a:hover{color:var(--gold-l)}
+.footer-bottom{max-width:1100px;margin:2rem auto 0;padding-top:1.5rem;border-top:1px solid var(--br);display:flex;justify-content:space-between;align-items:center;font-size:.78rem;color:var(--tx2);flex-wrap:wrap;gap:.5rem}
+
+/* REVEAL ANIMATIONS */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .features-grid{grid-template-columns:1fr 1fr}
+  .plans-grid{grid-template-columns:1fr}
+  .plan-card.featured{transform:scale(1)}
+  .ai-grid{grid-template-columns:1fr}
+  .steps-grid{grid-template-columns:1fr 1fr}
+  .steps-grid::before{display:none}
+  .testi-grid{grid-template-columns:1fr}
+  .stats-inner{grid-template-columns:1fr 1fr}
+  .footer-inner{grid-template-columns:1fr 1fr}
+  .mockup-screen{grid-template-columns:1fr 1fr}
+  .mock-chart{grid-column:span 2}
+  .nav-links{display:none}
+  .ham-btn{display:flex}
+  .float-badge{display:none}
+}
+@media(max-width:600px){
+  .features-grid{grid-template-columns:1fr}
+  .steps-grid{grid-template-columns:1fr}
+  .hero-btns{flex-direction:column;align-items:center}
+  .stats-inner{grid-template-columns:1fr 1fr}
+  .footer-inner{grid-template-columns:1fr}
+  .section{padding:4rem 1.25rem}
+}
+
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">🦷</div>
+    <span class="nav-logo-text">DentFlow</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features">المميزات</a>
+    <a href="#how">كيف يعمل</a>
+    <a href="#pricing">الأسعار</a>
+    <a href="#faq">الأسئلة الشائعة</a>
+  </div>
+  <a href="#pricing" class="nav-cta">ابدأ مجاناً</a>
+  <button class="ham-btn" onclick="toggleMenu()">☰</button>
+</nav>
+<div class="mob-menu" id="mobMenu">
+  <a href="#features" onclick="toggleMenu()">المميزات</a>
+  <a href="#how" onclick="toggleMenu()">كيف يعمل</a>
+  <a href="#pricing" onclick="toggleMenu()">الأسعار</a>
+  <a href="#faq" onclick="toggleMenu()">الأسئلة الشائعة</a>
+  <a href="#pricing" onclick="toggleMenu()" class="nav-cta" style="text-align:center">ابدأ مجاناً</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="float-badge fb1" style="color:var(--gr)">✅ حجز جديد: أحمد محمد</div>
+  <div class="float-badge fb2" style="color:var(--pu)">🧠 Claude AI مفعّل</div>
+  <div class="float-badge fb3" style="color:var(--gold-l)">📅 42 موعد اليوم</div>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="hero-badge-dot"></span> الجيل القادم من إدارة العيادات</div>
+    <h1 class="hero-title">
+      نظام <span>ذكي ومتكامل</span><br>لعيادة أسنانك
+    </h1>
+    <p class="hero-sub">
+      وفّر وقتك، حسّن تجربة مرضاك، وزد إيراداتك.<br>
+      من الحجز الإلكتروني حتى الوصفات الطبية بالذكاء الاصطناعي — كل شيء في مكان واحد.
+    </p>
+    <div class="hero-btns">
+      <a href="#pricing" class="btn-gold">💬 تواصل معنا للبدء ←</a>
+      <a href="#features" class="btn-outline">استكشف المميزات</a>
+    </div>
+    <div class="hero-mockup">
+      <div class="mockup-wrap">
+        <div class="mockup-inner">
+          <div class="mockup-bar">
+            <div class="mockup-dots"><span></span><span></span><span></span></div>
+            <div class="mockup-url">muradhub.vercel.app/dr-ameed/admin</div>
+          </div>
+          <div class="mockup-screen">
+            <div class="mock-card mc1"><div class="mock-num">48</div><div class="mock-lbl">إجمالي الحجوزات</div></div>
+            <div class="mock-card mc2"><div class="mock-num">7</div><div class="mock-lbl">قيد الانتظار</div></div>
+            <div class="mock-card mc3"><div class="mock-num">31</div><div class="mock-lbl">مؤكدة</div></div>
+            <div class="mock-card mc4"><div class="mock-num">840₪</div><div class="mock-lbl">إيرادات اليوم</div></div>
+            <div class="mock-chart" id="mockChart"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-item reveal"><div class="num" id="stat1">0</div><div class="lbl">عيادة تثق بنا</div></div>
+    <div class="stat-item reveal"><div class="num" id="stat2">0</div><div class="lbl">موعد أُدير</div></div>
+    <div class="stat-item reveal"><div class="num" id="stat3">0%</div><div class="lbl">رضا الأطباء</div></div>
+    <div class="stat-item reveal"><div class="num" id="stat4">0/7</div><div class="lbl">دعم فني</div></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="text-center">
+      <div class="section-tag">المميزات</div>
+      <h2 class="section-title">كل ما تحتاجه <span>في منصة واحدة</span></h2>
+      <p class="section-sub mx-auto">من إدارة المواعيد إلى الوصفات الطبية، نظامنا يغطي كل جانب من عيادتك</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card reveal">
+        <div class="feat-icon fi-gold">📅</div>
+        <div class="feat-title">حجز ذكي عبر الإنترنت</div>
+        <div class="feat-desc">صفحة حجز احترافية لكل عيادة، مع اختيار التاريخ والوقت المتاح تلقائياً بناءً على جدول الدوام</div>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon fi-blue">📊</div>
+        <div class="feat-title">داشبورد شامل</div>
+        <div class="feat-desc">تقارير مفصلة للإيرادات والمواعيد والمرضى، مع تقويم أسبوعي تفاعلي وإحصائيات لحظية</div>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon fi-purple">🧠</div>
+        <div class="feat-title">ذكاء اصطناعي متقدم</div>
+        <div class="feat-desc">سجل طبي صوتي يحوّل كلام الدكتور إلى ملف منظم، وفحص تفاعل الأدوية تلقائياً</div>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon fi-green">💬</div>
+        <div class="feat-title">تذكيرات واتساب</div>
+        <div class="feat-desc">إرسال تذكيرات المواعيد عبر واتساب بضغطة واحدة، مع قوالب رسائل قابلة للتخصيص</div>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon fi-red">💊</div>
+        <div class="feat-title">الوصفات الطبية</div>
+        <div class="feat-desc">إنشاء وإدارة الوصفات الطبية مع فحص التفاعلات الدوائية وتوفر الأدوية في فلسطين</div>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon fi-cyan">👥</div>
+        <div class="feat-title">ملفات المرضى</div>
+        <div class="feat-desc">ملف شامل لكل مريض يحتوي تاريخ المواعيد والوصفات والملاحظات الطبية والإيرادات</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI SECTION -->
+<section class="ai-section" id="ai">
+  <div class="container">
+    <div class="ai-grid">
+      <div>
+        <div class="section-tag" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.25);color:var(--pu)">الذكاء الاصطناعي</div>
+        <h2 class="section-title">مساعدك الطبي <span style="color:var(--pu)">الذكي</span></h2>
+        <p class="section-sub" style="color:var(--tx2)">تقنية Claude AI المتقدمة تعمل بصمت خلف الكواليس لتوفير وقتك</p>
+        <div class="ai-features-list">
+          <div class="ai-feature-item reveal">
+            <div class="ai-feat-ic">🎙️</div>
+            <div><div class="ai-feat-title">السجل الطبي الصوتي</div><div class="ai-feat-desc">تحدث مع مريضك بشكل طبيعي — Claude يلخص الحالة ويملأ الملف تلقائياً في ثوانٍ</div></div>
+          </div>
+          <div class="ai-feature-item reveal">
+            <div class="ai-feat-ic">💊</div>
+            <div><div class="ai-feat-title">فحص تفاعل الأدوية</div><div class="ai-feat-desc">تحذير فوري عند كتابة دواء يتعارض مع أدوية المريض، مع اقتراح البدائل المتاحة</div></div>
+          </div>
+          <div class="ai-feature-item reveal">
+            <div class="ai-feat-ic">📰</div>
+            <div><div class="ai-feat-title">موجز صباحي ذكي</div><div class="ai-feat-desc">عند فتح النظام، Claude يحضّر ملخصاً شاملاً عن أهم أحداث العيادة ويقدم نصائح مفيدة</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ai-visual reveal">
+        <div class="ai-card">
+          <div class="ai-card-head">
+            <div class="ai-avatar">🧠</div>
+            <div><div class="ai-card-title">موجز اليوم — د. أحمد</div></div>
+            <div class="ai-card-time">09:15 ص</div>
+          </div>
+          <div class="ai-text">صباح النور دكتور! عندك اليوم 12 موعداً، 8 منهم مؤكدة. إيرادات أمس بلغت 620₪ وهي أعلى بـ 18% عن الأسبوع الماضي. فيه 3 مرضى ما زاروا من 60+ يوم، يمكن ترسلهم تذكير اليوم 😊</div>
+        </div>
+        <div class="ai-scribe-demo">
+          <div style="text-align:center;font-size:.8rem;color:var(--gr);font-weight:700;margin-bottom:.75rem">السجل الطبي الصوتي</div>
+          <div class="ai-mic-btn">🎙️</div>
+          <div class="ai-wave">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div style="font-size:.78rem;color:var(--tx2);text-align:center;margin-bottom:.65rem">نتائج التحليل الآني</div>
+          <div class="ai-result-pills">
+            <span class="ai-pill">التشخيص: تسوس ضرس العقل</span>
+            <span class="ai-pill">الدواء: أموكسيسيلين 500مغ</span>
+            <span class="ai-pill">المدة: 7 أيام</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div class="container">
+    <div class="text-center">
+      <div class="section-tag">الآلية</div>
+      <h2 class="section-title">ابدأ <span>في 4 خطوات</span></h2>
+      <p class="section-sub mx-auto">من التسجيل حتى أول موعد في أقل من 10 دقائق</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <div class="step-num">1</div>
+        <div class="step-title">تواصل معنا</div>
+        <div class="step-desc">تحدث معنا عبر واتساب ونُعدّ حسابك مع بيانات عيادتك</div>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">2</div>
+        <div class="step-title">إعداد العيادة</div>
+        <div class="step-desc">أضف خدماتك وساعات الدوام وكلمة المرور من لوحة التحكم</div>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">3</div>
+        <div class="step-title">شارك الرابط</div>
+        <div class="step-desc">أرسل رابط الحجز لمرضاك عبر واتساب أو ضعه في بيوك الإنستغرام</div>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">4</div>
+        <div class="step-title">راقب وادر</div>
+        <div class="step-desc">تابع المواعيد والمرضى والإيرادات من لوحة التحكم الاحترافية</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="container">
+    <div class="text-center">
+      <div class="section-tag">الأسعار</div>
+      <h2 class="section-title">خطط تناسب <span>جميع العيادات</span></h2>
+      <p class="section-sub mx-auto">ادفع شهرياً، لا عقود طويلة. ابدأ بالخطة المناسبة وغيّرها متى شئت</p>
+    </div>
+    <div class="plans-grid" id="plansGrid">
+      <!-- Loaded from Supabase -->
+      <div class="plan-card reveal" id="plan-basic">
+        <div class="plan-name">أساسي</div>
+        <div class="plan-price"><div class="plan-amount" id="price-basic">49</div><div class="plan-currency">₪</div></div>
+        <div class="plan-period">شهرياً</div>
+        <div class="plan-desc">مثالي للعيادات الناشئة التي تريد تنظيم مواعيدها</div>
+        <div class="plan-features">
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>صفحة حجز إلكتروني</div>
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>داشبورد الإدارة</div>
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>ملفات المرضى</div>
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>تذكيرات واتساب</div>
+          <div class="plan-feat"><span class="plan-feat-ic x">✗</span><span style="color:var(--tx3)">الذكاء الاصطناعي</span></div>
+          <div class="plan-feat"><span class="plan-feat-ic x">✗</span><span style="color:var(--tx3)">الوصفات الطبية</span></div>
+        </div>
+        <button class="plan-btn" onclick="contactWA('أساسي')">💬 تواصل معنا</button>
+      </div>
+      <div class="plan-card featured reveal" id="plan-pro">
+        <div class="plan-name" style="margin-top:1.5rem">احترافي</div>
+        <div class="plan-price"><div class="plan-amount" id="price-pro">99</div><div class="plan-currency">₪</div></div>
+        <div class="plan-period">شهرياً</div>
+        <div class="plan-desc">للعيادات النشطة التي تريد تحسين تجربة المريض</div>
+        <div class="plan-features">
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>كل مميزات الأساسي</div>
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>الوصفات الطبية</div>
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>تقارير الإيرادات</div>
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>السجل الطبي الصوتي AI</div>
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>فحص تفاعل الأدوية AI</div>
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>الموجز الصباحي الذكي</div>
+        </div>
+        <button class="plan-btn gold-btn" onclick="contactWA('احترافي')">💬 تواصل معنا</button>
+      </div>
+      <div class="plan-card reveal" id="plan-enterprise">
+        <div class="plan-name">مؤسسي</div>
+        <div class="plan-price"><div class="plan-amount" id="price-enterprise">199</div><div class="plan-currency">₪</div></div>
+        <div class="plan-period">شهرياً</div>
+        <div class="plan-desc">للعيادات الكبرى والمجمعات الطبية المتعددة</div>
+        <div class="plan-features">
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>كل مميزات الاحترافي</div>
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>عيادات متعددة</div>
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>تقارير موحدة</div>
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>دعم أولوي 24/7</div>
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>تخصيص كامل</div>
+          <div class="plan-feat"><span class="plan-feat-ic">✓</span>تدريب الفريق</div>
+        </div>
+        <button class="plan-btn" onclick="contactWA('مؤسسي')">💬 تواصل معنا</button>
+      </div>
+    </div>
+    <p class="pricing-note">✅ لا رسوم إعداد · ✅ إلغاء في أي وقت · ✅ فترة تجربة مجانية 14 يوم</p>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section">
+  <div class="container">
+    <div class="text-center">
+      <div class="section-tag">آراء الأطباء</div>
+      <h2 class="section-title">يثق بنا <span>أطباء متميزون</span></h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"وفّر علي ساعات كاملة كل أسبوع. الآن مرضاي يحجزون بأنفسهم ويستلمون تذكيرات تلقائية. ما حدا بيلغي موعد!"</div>
+        <div class="testi-author"><div class="testi-avatar">أ</div><div><div class="testi-name">د. أمجد الخليل</div><div class="testi-role">طب أسنان — رام الله</div></div></div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"خاصية السجل الطبي الصوتي خيالية! أحكي مع المريض بشكل طبيعي والنظام يملأ الملف تلقائياً. ما شفت شي متله!"</div>
+        <div class="testi-author"><div class="testi-avatar">س</div><div><div class="testi-name">د. سمر حداد</div><div class="testi-role">طب أسنان — نابلس</div></div></div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"الأسعار منطقية جداً وفريق الدعم ممتاز. في أسبوع واحد صار عندي كل مواعيدي منظمة وإيراداتي تتبع تلقائياً"</div>
+        <div class="testi-author"><div class="testi-avatar">ر</div><div><div class="testi-name">د. راشد عبد الله</div><div class="testi-role">طب أسنان — الخليل</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="text-center">
+      <div class="section-tag">الأسئلة الشائعة</div>
+      <h2 class="section-title">أسئلة <span>يسألها الجميع</span></h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)">هل أحتاج لأي خبرة تقنية؟ <span class="faq-arrow">▼</span></div>
+        <div class="faq-a"><div class="faq-a-inner">لا بالمرة! النظام مصمم للأطباء وليس للمبرمجين. تواصل معنا وسنُعدّ كل شيء في غضون ساعات، وسنتابع معك حتى تتعلم كيف تستخدمه.</div></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)">هل بيانات مرضاي آمنة؟ <span class="faq-arrow">▼</span></div>
+        <div class="faq-a"><div class="faq-a-inner">نعم تماماً. بياناتك محفوظة على خوادم Supabase المشفرة بمعايير ISO 27001. كل عيادة معزولة تماماً عن الأخرى ولا أحد يستطيع الوصول لبياناتك غيرك.</div></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)">هل يعمل النظام على الموبايل؟ <span class="faq-arrow">▼</span></div>
+        <div class="faq-a"><div class="faq-a-inner">نعم! النظام متجاوب بالكامل مع جميع الأجهزة. يمكنك تثبيته على هاتفك كتطبيق (PWA) وإدارة العيادة من أي مكان.</div></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)">كيف تعمل فترة التجربة المجانية؟ <span class="faq-arrow">▼</span></div>
+        <div class="faq-a"><div class="faq-a-inner">ندخل عيادتك على الخطة الاحترافية لمدة 14 يوماً مجاناً. لا نطلب بيانات الدفع مقدماً. إذا أعجبك النظام، تدفع بعد انتهاء الفترة. إذا لم يعجبك، لا يوجد أي التزام.</div></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)">ما الفرق بين الخطط؟ <span class="faq-arrow">▼</span></div>
+        <div class="faq-a"><div class="faq-a-inner">الخطة الأساسية مثالية للبداية وتشمل الحجز والإدارة. الخطة الاحترافية تضيف الذكاء الاصطناعي والوصفات الطبية. الخطة المؤسسية للعيادات المتعددة مع دعم أولوي.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-box">
+    <h2 class="cta-title">جاهز تطور <span style="color:var(--gold-l)">عيادتك؟</span></h2>
+    <p class="cta-sub">انضم لعيادات تستخدم DentFlow اليوم وابدأ فترتك التجريبية المجانية 14 يوماً</p>
+    <a href="#" class="btn-gold" onclick="contactWA('عام')" style="display:inline-flex;font-size:1.1rem;padding:1rem 2.5rem">
+      💬 تواصل معنا الآن على واتساب
+    </a>
+    <p style="font-size:.8rem;color:var(--tx2);margin-top:1.25rem">لا رسوم إعداد · لا عقود · إلغاء في أي وقت</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo" style="display:inline-flex;margin-bottom:.75rem">
+        <div class="nav-logo-icon">🦷</div>
+        <span class="nav-logo-text">DentFlow</span>
+      </a>
+      <p>منصة متكاملة لإدارة عيادات الأسنان بالذكاء الاصطناعي. وفّر وقتك وطور عيادتك.</p>
+    </div>
+    <div class="footer-col">
+      <h4>المنتج</h4>
+      <a href="#features">المميزات</a>
+      <a href="#how">كيف يعمل</a>
+      <a href="#pricing">الأسعار</a>
+    </div>
+    <div class="footer-col">
+      <h4>الدعم</h4>
+      <a href="#faq">الأسئلة الشائعة</a>
+      <a href="#" onclick="contactWA('دعم')">تواصل معنا</a>
+    </div>
+    <div class="footer-col">
+      <h4>قانوني</h4>
+      <a href="#">سياسة الخصوصية</a>
+      <a href="#">شروط الاستخدام</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 DentFlow — جميع الحقوق محفوظة</span>
+    <span>صُنع بـ ❤️ لأطباء الأسنان في فلسطين</span>
+  </div>
+</footer>
+
+<script>
+
+const SB='https://mcyymirzzefhhutiofsw.supabase.co';
+const AK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jeXltaXJ6emVmaGh1dGlvZnN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjQxMTAsImV4cCI6MjA5NDg0MDExMH0.82-EY5XTdCEcLbuRi_6gbjpeq1IEqAP-wm-OxV-OSLc';
+let waNumber='970599000000';
+
+async function loadPricing(){
+  try{
+    const r=await fetch(SB+'/rest/v1/system_settings?key=in.(plan_basic_price,plan_pro_price,plan_enterprise_price,contact_wa_number,plan_basic_name,plan_pro_name,plan_enterprise_name)&select=key,value',{headers:{'apikey':AK,'Authorization':'Bearer '+AK}});
+    const data=await r.json();
+    if(!data||!data.length)return;
+    const m={};data.forEach(d=>m[d.key]=d.value);
+    if(m.plan_basic_price)document.getElementById('price-basic').textContent=m.plan_basic_price;
+    if(m.plan_pro_price)document.getElementById('price-pro').textContent=m.plan_pro_price;
+    if(m.plan_enterprise_price)document.getElementById('price-enterprise').textContent=m.plan_enterprise_price;
+    if(m.contact_wa_number)waNumber=m.contact_wa_number;
+    if(m.plan_basic_name)document.querySelector('#plan-basic .plan-name').textContent=m.plan_basic_name;
+    if(m.plan_pro_name)document.querySelector('#plan-pro .plan-name').textContent=m.plan_pro_name;
+    if(m.plan_enterprise_name)document.querySelector('#plan-enterprise .plan-name').textContent=m.plan_enterprise_name;
+  }catch(e){console.log('Pricing load error:',e);}
+}
+
+function contactWA(plan){
+  const msgs={
+    'أساسي':'السلام عليكم، أنا مهتم بخطة DentFlow الأساسية (49₪/شهر). هل يمكنكم مساعدتي في البدء؟',
+    'احترافي':'السلام عليكم، أنا مهتم بخطة DentFlow الاحترافية (99₪/شهر) مع الذكاء الاصطناعي. هل يمكنكم إعداد حسابي؟',
+    'مؤسسي':'السلام عليكم، أنا مهتم بخطة DentFlow المؤسسية. هل يمكنكم التواصل معي لمناقشة التفاصيل؟',
+    'دعم':'السلام عليكم، أحتاج مساعدة في DentFlow.',
+    'عام':'السلام عليكم، أريد البدء مع DentFlow وتجربة المنصة مجاناً لمدة 14 يوماً!'
+  };
+  const msg=msgs[plan]||msgs['عام'];
+  window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+// NAVBAR SCROLL
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50);
+});
+
+// MOBILE MENU
+function toggleMenu(){
+  document.getElementById('mobMenu').classList.toggle('open');
+}
+
+// FAQ TOGGLE
+function toggleFaq(el){
+  const item=el.parentElement;
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if(!isOpen)item.classList.add('open');
+}
+
+// REVEAL ON SCROLL
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// COUNTER ANIMATION
+function animateCounter(el,target,suffix,duration){
+  let start=0;const step=target/60;
+  const timer=setInterval(()=>{
+    start=Math.min(start+step,target);
+    el.textContent=Math.round(start)+(suffix||'');
+    if(start>=target)clearInterval(timer);
+  },duration/60);
+}
+const statsObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      statsObs.disconnect();
+      animateCounter(document.getElementById('stat1'),50,'+',1500);
+      animateCounter(document.getElementById('stat2'),5000,'+',2000);
+      document.getElementById('stat3').textContent='98%';
+      document.getElementById('stat4').textContent='24/7';
+    }
+  });
+},{threshold:.5});
+const statsEl=document.querySelector('.stats-strip');
+if(statsEl)statsObs.observe(statsEl);
+
+// MOCK CHART BARS
+function buildChart(){
+  const chart=document.getElementById('mockChart');
+  if(!chart)return;
+  const heights=[45,60,40,75,55,80,65,90,70,85,60,95];
+  chart.innerHTML=heights.map(h=>'<div class="mock-bar-item" style="height:'+h+'%"></div>').join('');
+}
+buildChart();
+
+// INIT
+loadPricing();
+
+</script>
+</body>
+</html>
